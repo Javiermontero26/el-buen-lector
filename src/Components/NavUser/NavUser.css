@@ -1,0 +1,137 @@
+/* ---------- ROOT VARIABLES ---------- */
+:root {
+    --color-primary: #7380ec;
+    --color-danger: #ff7782;
+    --color-success: #41f1b6;
+    --color-warning: #ffbb55;
+    --color-white: #fff;
+    --color-info-dark: #7d8da1;
+    --color-info-light: #dce1eb;
+    --color-dark: #363949;
+    --color-light: rgba(132, 139, 200, 0.18);
+    --color-primary-variant: #111e88;
+    --color-dark-variant: #677483;
+    --color-background: #f6f6f9;
+
+    --card-border-radius: 2rem;
+    --border-radius-1: 0.4rem;
+    --border-radius-2: 0.8rem;
+    --border-radius-3: 1.2rem;
+
+    --card-padding: 1.8rem;
+    --padding-1: 1.2@rem;
+
+    --box-shadow: 0 2rem 3rem var(--color-light);
+}
+
+h1 {
+    font-weight: 800;
+    font-size: 1.8rem;
+}
+
+h2 {
+    font-size: 1.4rem;
+}
+
+h3 {
+    font-size: 0.87rem;
+}
+
+h4 {
+    font-size: 0.8rem;
+}
+
+h5 {
+    font-size: 0.77rem;
+}
+
+small {
+    font-size: 0.75rem;
+}
+.right {
+    background-color: var(--color-dark);
+    width: 85%;           /* El ancho será el 75% de la pantalla */
+    text-align: end;      /* Alineación del contenido hacia la derecha */
+    position: fixed;      /* Fija la sección al top de la página */
+    top: 0;               /* Pegado al top */
+    right: 0;             /* Pegado al borde derecho */
+    z-index: 1000;        /* Asegura que se superponga sobre otros elementos */
+}
+.right .top {
+    display: flex;
+    justify-content: end;
+    gap: 2rem;
+}
+.right .titlepages {
+    display: flex;
+    justify-content: start;
+
+}
+.titlepages {
+    color: var(--color-white);        /* Texto blanco */
+    font-size: 1.8rem;                /* Tamaño de texto más grande */
+    font-weight: 800;                 /* Texto en negrita */
+    margin: 0;                        /* Elimina márgenes por defecto */
+    position: absolute;               /* Fija la posición del título */
+}
+
+.right .top button {
+    display: none;
+}
+
+.right .theme-toggler {
+    background: var(--color-light);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    height: 1.6rem;
+    width: 4.2rem;
+    cursor: pointer;
+    border-radius: var(--border-radius-1);
+}
+
+.right .theme-toggler span {
+    font-size: 1.2rem;
+    width: 50%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.right .theme-toggler span.active {
+    background: var(--color-light);
+    color: white;
+    border-radius: var(--border-radius-1);
+}
+
+.right .top .profile{
+    display: flex;
+    gap: 1rem;
+    text-align: right;
+    margin: 10px 10px; /* Aplica un margen de 10px a los lados */
+}
+.right .top .profile .info {
+    display: flex;
+    flex-direction: column; /* Alinea los elementos de arriba hacia abajo */
+    justify-content: center;
+    align-items: flex-start;
+}
+
+.right .top .profile .info p {
+    margin: 0; /* Elimina cualquier margen por defecto */
+}
+
+.right .top .profile .info small {
+    font-size: 0.9rem;
+    padding-left: 2.5rem; /* Esto agregará espacio interno a la izquierda del texto "Admin" */
+}
+.titlepages {
+    color: white;               /* Texto blanco */
+    font-size: 1.8rem;          /* Tamaño de texto más grande */
+    font-weight: 800;           /* Texto en negrita */
+    margin: 0;                  /* Elimina márgenes por defecto */
+    padding-left: 1rem;         /* Espacio a la izquierda */
+    padding-top: 1rem;          /* Espacio superior */
+    margin-bottom: 1rem;        /* Espacio debajo del título */
+}

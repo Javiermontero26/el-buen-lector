@@ -1,0 +1,22 @@
+@media (max-width: 1300px) {
+    .hide-on-small {
+        display: none !important;
+    }
+    .full-width-on-small {
+        flex: 0 0 100%;
+        max-width: 100%;
+    }
+}
+
+.container-fluid {
+    height: 100vh; /* Asegura que el contenedor ocupe el 100% de la altura de la ventana */
+}
+
+.form-container {
+    background-color: #003afa; /* Color de fondo */
+    height: 100%; /* Asegura que el contenedor del formulario ocupe todo el alto disponible */
+}
+
+.text-custom {
+    font-size: 1.5rem; /* Ajusta el tamaño de la fuente como necesites */
+}
