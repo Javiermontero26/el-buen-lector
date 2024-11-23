@@ -4,6 +4,7 @@ import '../LoginForm/login.css';
 import { Notyf } from 'notyf';
 import 'notyf/notyf.min.css';
 import { messages } from '../LoginForm/logindatadays';
+import logologin from '../LoginForm/logoblanco.png'
 
 const Login = () => {
     const notyf = new Notyf({
@@ -86,7 +87,7 @@ const Login = () => {
                 >
                     <form className="text-center p-4 rounded w-100" style={{ maxWidth: '400px' }} onSubmit={handleSubmit}>
                         <div className="text-center mb-4">
-                            <img className="img-fluid" src={'src/Pages/Login/LoginForm/logoblanco.png'} alt="logo" />
+                            <img className="img-fluid" src={logologin} alt="logo" />
                             <hr className="text-white w-75 mx-5" />
                             <h2 className="mb-3 mt-5 text-white h3 fw-bold">{messageOfTheDay}</h2>
                         </div>
