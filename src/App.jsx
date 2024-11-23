@@ -1,18 +1,19 @@
 import React from 'react';
 import './App.css';
-import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
+import { HashRouter as Router, Routes, Route, Navigate } from 'react-router-dom'; // Usar HashRouter
 import Login from './Pages/Login/LoginForm/login.jsx';
 import Dasboard from './Pages/Dasboard/Dasboard.jsx';
 import Libros from './Pages/Libros/Libros.jsx';
 import ProtectedRoute from './Components/Login/ProtectedRoute.jsx';
 import NavUser from './Components/NavUser/NavUser.jsx';
 import UsuarioNav from './Components/Navbar/usuarioNav.jsx';
-import Entradas from './Pages/Entradas/Entradas.jsx'
+import Entradas from './Pages/Entradas/Entradas.jsx';
 import Salidas from './Pages/Salidas/Salidas.jsx';
 import Stock from './Pages/Stock/Stock.jsx';
 import Configuracion from './Pages/Configuracion/Configuracion.jsx';
 import Usuarios from './Pages/Usuarios/Usuarios.jsx';
 import Reportes from './Pages/Reportes/Reportes.jsx';
+
 const App = () => {
     return (
         <Router>
@@ -20,23 +21,21 @@ const App = () => {
                 {/* Ruta para el Login */}
                 <Route path="/el_buen_lector" element={<Login />} />
 
-                {/*Ruta para el Dasborad(Pagina Principal)*/}
+                {/* Ruta para el Dashboard (Página Principal) */}
                 <Route
                     path="/el_buen_lector/Pages/Dasboard/Dasboard"
                     element={
                         <ProtectedRoute>
-                            <>
-                                <NavUser />
-                                <UsuarioNav />
-                                <main>
-                                    <Dasboard />
-                                </main>
-                            </>
+                            <NavUser />
+                            <UsuarioNav />
+                            <main>
+                                <Dasboard />
+                            </main>
                         </ProtectedRoute>
                     }
                 />
 
-                {/*Ruta para Libros (Pagina de Libros)*/}
+                {/* Ruta para Libros (Página de Libros) */}
                 <Route
                     path="/el_buen_lector/Pages/Libros/Libros"
                     element={
@@ -52,7 +51,7 @@ const App = () => {
                     }
                 />
 
-                {/*Ruta para Entradas (Pagina de Entradas)*/}
+                {/* Ruta para Entradas (Página de Entradas) */}
                 <Route
                     path="/el_buen_lector/Pages/Entradas/Entradas"
                     element={
@@ -68,7 +67,7 @@ const App = () => {
                     }
                 />
 
-                {/*Ruta para Salidas (Pagina de Salidas)*/}
+                {/* Ruta para Salidas (Página de Salidas) */}
                 <Route
                     path="/el_buen_lector/Pages/Salidas/Salidas"
                     element={
@@ -84,7 +83,7 @@ const App = () => {
                     }
                 />
 
-                {/*Ruta para Stock (Pagina de Stock)*/}
+                {/* Ruta para Stock (Página de Stock) */}
                 <Route
                     path="/el_buen_lector/Pages/Stock/Stock"
                     element={
@@ -100,7 +99,7 @@ const App = () => {
                     }
                 />
 
-                {/*Ruta para Reportes (Pagina de Reportes)*/}
+                {/* Ruta para Reportes (Página de Reportes) */}
                 <Route
                     path="/el_buen_lector/Pages/Reportes/Reportes"
                     element={
@@ -116,7 +115,7 @@ const App = () => {
                     }
                 />
 
-                {/*Ruta para Usuarios (Pagina de Usuarios)*/}
+                {/* Ruta para Usuarios (Página de Usuarios) */}
                 <Route
                     path="/el_buen_lector/Pages/Usuarios/Usuarios"
                     element={
@@ -132,7 +131,7 @@ const App = () => {
                     }
                 />
 
-                {/*Ruta para Configuracion (Pagina de Configuracion del Usuario)*/}
+                {/* Ruta para Configuración (Página de Configuración del Usuario) */}
                 <Route
                     path="/el_buen_lector/Pages/Configuracion/Configuracion"
                     element={
@@ -148,8 +147,8 @@ const App = () => {
                     }
                 />
 
-                {/* Redirigir cualquier ruta desconocida al Login*/}
-                <Route path="/" element={<Navigate to="/el_buen_lector" replace />} />
+                {/* Redirigir cualquier ruta desconocida al Login */}
+                <Route path="*" element={<Navigate to="/el_buen_lector" replace />} />
             </Routes>
         </Router>
     );
