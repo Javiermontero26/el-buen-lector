@@ -7,6 +7,7 @@ import { messages } from '../LoginForm/logindatadays';
 import logologin from '../LoginForm/logoblanco.png'
 
 const Login = () => {
+    
     const notyf = new Notyf({
         duration: 3000,
         position: { x: 'center', y: 'top' },
@@ -50,7 +51,7 @@ const Login = () => {
     const handleSubmit = (event) => {
         event.preventDefault();
 
-        notyf.dismissAll();
+        notyf.dismissAll(); // Cierra todas las notificaciones activas
 
         if ((username === validCredentials.username && password === validCredentials.password) ||
             (username === validCredentialsAlmacen.username && password === validCredentialsAlmacen.password)) {

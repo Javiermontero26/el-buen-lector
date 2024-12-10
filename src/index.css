@@ -179,6 +179,7 @@ aside .sidebar a.active::before {
     background: var(--color-primary);
 }
 
+/*Aquí se cambia el color de la class="active"*/
 aside .sidebar a.active span {
     color: var(--color-primary);
     margin-left: calc(1rem - 3px);

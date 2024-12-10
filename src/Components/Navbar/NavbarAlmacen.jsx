@@ -1,23 +1,27 @@
 import React from 'react';
-import { Link, useNavigate } from 'react-router-dom';
-import logo from '../Navbar/logo.png'
+import { Link, useNavigate, useLocation } from 'react-router-dom';  // Importamos useLocation
+import logo from '../Navbar/logo.png';
 
 const NavbarAlmacen = () => {
     const navigate = useNavigate();
+    const location = useLocation();  // Hook que devuelve la ruta actual
 
     const handleLogout = () => {
         localStorage.removeItem('isAuthenticated');
         navigate('/el_buen_lector');
     };
 
+    // Función para comprobar si la ruta actual es la misma que la del enlace
+    const Active = (path) => location.pathname === path;
+
     return (
         <div className="container">
             <aside>
                 <div className="top">
                     <Link className="nav-link text-white" to="/el_buen_lector/Pages/Dasboard/Dasboard">
-                        <div class="logo">
-                            <img src={logo} />
-                            <h2>ElBuen<span class="primary">Lector</span></h2>
+                        <div className="logo">
+                            <img src={logo} alt="logo" />
+                            <h2>ElBuen<span className="primary">Lector</span></h2>
                         </div>
                     </Link>
                     <div className="close" id="close">
@@ -25,23 +29,24 @@ const NavbarAlmacen = () => {
                     </div>
                 </div>
                 <div className="sidebar">
-                    <Link className="active" to="/el_buen_lector/Pages/Libros/Libros">
+                    {/* Usamos "Active" determinar si el enlace debe tener la clase 'active' (nombre de la class) */}
+                    <Link className={Active('/el_buen_lector/Pages/Libros/Libros') ? 'active' : ''} to="/el_buen_lector/Pages/Libros/Libros">
                         <span className="material-symbols-sharp">library_books</span>
                         <h3>Libros</h3>
                     </Link>
-                    <Link to="/el_buen_lector/Pages/Stock/Stock">
+                    <Link className={Active('/el_buen_lector/Pages/Stock/Stock') ? 'active' : ''} to="/el_buen_lector/Pages/Stock/Stock">
                         <span className="material-symbols-sharp">box</span>
                         <h3>Stock</h3>
                     </Link>
-                    <Link to="/el_buen_lector/Pages/Entradas/Entradas">
+                    <Link className={Active('/el_buen_lector/Pages/Entradas/Entradas') ? 'active' : ''} to="/el_buen_lector/Pages/Entradas/Entradas">
                         <span className="material-symbols-sharp">contract_edit</span>
                         <h3>Entradas</h3>
                     </Link>
-                    <Link to="/el_buen_lector/Pages/Salidas/Salidas">
+                    <Link className={Active('/el_buen_lector/Pages/Salidas/Salidas') ? 'active' : ''} to="/el_buen_lector/Pages/Salidas/Salidas">
                         <span className="material-symbols-sharp">contract_delete</span>
                         <h3>Salidas</h3>
                     </Link>
-                    <Link to="/el_buen_lector/Pages/Configuracion/Configuracion">
+                    <Link className={Active('/el_buen_lector/Pages/Configuracion/Configuracion') ? 'active' : ''} to="/el_buen_lector/Pages/Configuracion/Configuracion">
                         <span className="material-symbols-sharp">settings</span>
                         <h3>Configuracion</h3>
                     </Link>
@@ -52,7 +57,6 @@ const NavbarAlmacen = () => {
                 </div>
             </aside>
         </div>
-
     );
 };
 
