@@ -26,7 +26,7 @@ const App = () => {
                     element={
                         <ProtectedRoute>
                             <>
-                                <div className="container">
+                                <div className="container-fluid">
                                     <NavUser />
                                     <UsuarioNav />
                                     <main>
@@ -43,7 +43,7 @@ const App = () => {
                     path="/el_buen_lector/Pages/Libros/Libros"
                     element={
                         <ProtectedRoute>
-                            <div className="container">
+                            <div className="container-fluid">
                                 <NavUser />
                                 <UsuarioNav />
                                 <main>

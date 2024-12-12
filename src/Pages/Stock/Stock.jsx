@@ -1,17 +1,20 @@
 import React, { useEffect, useState } from 'react';
 import { Notyf } from 'notyf';
-import 'notyf/notyf.min.css';
+import Select from 'react-select';  // Importar el componente Select
 
 const Stock = () => {
+  // URLs de la API
   const urlGet = 'http://localhost:8080/apiv1/stocklibros/listar';
   const urlPost = 'http://localhost:8080/apiv1/stocklibros/registrar';
   const urlLibros = 'http://localhost:8080/apiv1/libros/listar';  // URL para obtener los libros
+
+  // Estados
   const [stocklibros, setStockLibros] = useState([]);
   const [libros, setLibros] = useState([]);  // Estado para almacenar los libros
   const [nuevoStock, setNuevoStock] = useState({ idLibro: '', cantidad: '', motivo: '' });
   const [modalShow, setModalShow] = useState(false);
 
-  // Crear una instancia de Notyf
+  // Crear una instancia de Notyf para notificaciones
   const notyf = new Notyf();
 
   // Obtener stock de libros
@@ -76,8 +79,23 @@ const Stock = () => {
     fetchLibros();  // Cargar los libros cuando el componente se monta
   }, []);
 
+  // Opciones para React-Select
+  const libroOptions = libros.map((libro) => ({
+    value: libro.idLibro,
+    label: libro.titulo
+  }));
+
+  // Manejador de cambio de selección en React-Select
+  const handleSelectChange = (selectedOption) => {
+    setNuevoStock({
+      ...nuevoStock,
+      idLibro: selectedOption ? selectedOption.value : ''
+    });
+  };
+
   return (
     <div className="container mt-4">
+      {/* Card Header */}
       <div className="card border-top-0">
         <div className="card-header bg-primary border-top p-3">
           <div className="d-flex justify-content-between align-items-center">
@@ -94,7 +112,6 @@ const Stock = () => {
         </div>
       </div>
 
-
       {/* Modal para Agregar Stock */}
       {modalShow && (
         <div className="modal show" style={{ display: 'block' }} tabIndex="-1" aria-hidden="true">
@@ -107,21 +124,14 @@ const Stock = () => {
               <div className="modal-body">
                 <div className="mb-3">
                   <label htmlFor="idLibro" className="form-label">Selecciona un Libro</label>
-                  <select
+                  <Select
                     id="idLibro"
-                    name="idLibro"
-                    className="form-select"
-                    value={nuevoStock.idLibro}
-                    onChange={(e) => setNuevoStock({ ...nuevoStock, idLibro: e.target.value })}
-                    required
-                  >
-                    <option value="">Selecciona un libro</option>
-                    {libros.map((libro) => (
-                      <option key={libro.idLibro} value={libro.idLibro}>
-                        {libro.titulo}
-                      </option>
-                    ))}
-                  </select>
+                    options={libroOptions}
+                    onChange={handleSelectChange}
+                    value={libroOptions.find((option) => option.value === nuevoStock.idLibro)}
+                    placeholder="Selecciona un libro"
+                    isClearable//={false}
+                  />
                 </div>
                 <div className="mb-3">
                   <label htmlFor="cantidad" className="form-label">Cantidad</label>
@@ -137,8 +147,51 @@ const Stock = () => {
                 </div>
                 <div className="mb-3">
                   <label htmlFor="motivo" className="form-label">Motivo</label>
-                  <input type="text" className="form-control" id="motivo" name="motivo" value={nuevoStock.motivo} onChange={(e) => setNuevoStock({ ...nuevoStock, motivo: e.target.value })} required
-                  />
+                  <div id="motivo" name="motivo" className="d-flex">
+                    <div className="form-check form-check-inline">
+                      <input
+                        type="radio"
+                        className="form-check-input bg-secondary"
+                        id="motivoCompra"
+                        name="motivo"
+                        value="Compra"
+                        checked={nuevoStock.motivo === "Compra"}
+                        onChange={(e) => setNuevoStock({ ...nuevoStock, motivo: e.target.value })}
+                        required
+                      />
+                      <label className="form-check-label" htmlFor="motivoCompra">
+                        Compra
+                      </label>
+                    </div>
+                    <div className="form-check form-check-inline">
+                      <input
+                        type="radio"
+                        className="form-check-input bg-secondary"
+                        id="motivoVenta"
+                        name="motivo"
+                        value="Venta"
+                        checked={nuevoStock.motivo === "Venta"}
+                        onChange={(e) => setNuevoStock({ ...nuevoStock, motivo: e.target.value })}
+                      />
+                      <label className="form-check-label" htmlFor="motivoVenta">
+                        Venta
+                      </label>
+                    </div>
+                    <div className="form-check form-check-inline">
+                      <input
+                        type="radio"
+                        className="form-check-input bg-secondary"
+                        id="motivoDevolucion"
+                        name="motivo"
+                        value="Devolución"
+                        checked={nuevoStock.motivo === "Devolución"}
+                        onChange={(e) => setNuevoStock({ ...nuevoStock, motivo: e.target.value })}
+                      />
+                      <label className="form-check-label" htmlFor="motivoDevolucion">
+                        Devolución
+                      </label>
+                    </div>
+                  </div>
                 </div>
               </div>
               <div className="modal-footer">

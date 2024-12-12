@@ -94,19 +94,30 @@ b {
 .warning {
     color: var(--color-warning);
 }
-body{
+
+body {
     background-color: white;
 }
+
 aside {
-    height: 100vh;            /* Ocupa toda la altura de la ventana */
-    width: 15%;             /* Define un ancho fijo */
-    position: fixed;          /* Para que permanezca fijo al hacer scroll */
-    top: 0;                   /* Pegado al borde superior */
-    left: 0;                  /* Pegado al borde izquierdo */
-    padding: 1rem;            /* Espaciado interno */
-    box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1); /* Sombra para separarlo visualmente */
-    z-index: 1000;            /* Asegura que esté encima de otros elementos */
-    background-color: var(--color-dark); /* Agregado para el color de fondo */
+    height: 100vh;
+    /* Ocupa toda la altura de la ventana */
+    width: 15%;
+    /* Define un ancho fijo */
+    position: fixed;
+    /* Para que permanezca fijo al hacer scroll */
+    top: 0;
+    /* Pegado al borde superior */
+    left: 0;
+    /* Pegado al borde izquierdo */
+    padding: 1rem;
+    /* Espaciado interno */
+    box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1);
+    /* Sombra para separarlo visualmente */
+    z-index: 1000;
+    /* Asegura que esté encima de otros elementos */
+    background-color: var(--color-dark);
+    /* Agregado para el color de fondo */
 }
 
 aside .top {
@@ -129,6 +140,7 @@ aside .logo img {
 aside .close {
     display: none;
 }
+
 
 /* ---------- SIDEBAR ---------- */
 
@@ -191,7 +203,7 @@ aside .sidebar a:hover {
 }
 
 /*Opcion para salir*/
-aside .sidebar a.salir:hover{
+aside .sidebar a.salir:hover {
     color: var(--color-danger);
 }
 
@@ -210,17 +222,167 @@ aside .sidebar .message-count {
 /* ---------- MAIN CONTENT ---------- */
 
 main {
-    margin-left: 15%; /* Deja espacio para el aside */
+    margin-left: 15%;
+    /* Deja espacio para el aside */
     margin-top: 6rem;
-    min-height: 100vh; /* Asegura que el contenido principal ocupe toda la altura */
+    min-height: 100vh;
+    /* Asegura que el contenido principal ocupe toda la altura */
     width: auto;
 
 }
 
 .estadistica {
-    background:var(--color-info-light);
+    background: var(--color-info-light);
     border-radius: 2%;
     width: 550px;
-    margin-left: 5%; /* Deja espacio para el aside */
+    margin-left: 5%;
+    /* Deja espacio para el aside */
     margin-top: 3%;
 }
+
+
+/* Tables */
+
+@media screen and (max-width: 1100px) {
+
+    aside .logo {
+        margin-left: 1.6rem;
+    }
+
+    aside .logo h2 {
+        display: none;
+    }
+
+    aside .sidebar h3 {
+        display: none;
+    }
+
+    aside .sidebar a {
+        display: flex;
+        color: var(--color-info-light);
+        gap: 0.2rem;
+        align-items: center;
+        position: relative;
+        height: 3.7rem;
+        transition: all 300ms ease;
+        text-decoration: none;
+    }
+
+    aside .sidebar a span {
+        font-size: 1.7rem;
+        transition: all 300ms ease;
+    }
+
+    .right .top .theme-toggler {
+        width: 4.4rem;
+        margin: 1rem;
+        position: absolute;
+        left: 57%;
+    }
+
+}
+
+
+/* @media screen and (max-width: 768px) {
+
+    aside {
+        position: fixed;
+        left: 0;
+        background: var(--color-white);
+        width: 18rem;
+        z-index: 3;
+        box-shadow: 1rem 3rem 4rem var(--color-light);
+        height: 100vh;
+        padding-right: var(--card-padding);
+        display: none;
+        animation: showMenu 400ms ease forwards;
+    }
+
+    @keyframes showMenu {
+        to {
+            left: 0;
+        }
+    }
+
+    aside .logo {
+        margin-left: 1rem;
+    }
+
+    aside .logo h2 {
+        display: inline;
+    }
+
+    aside .sidebar h3 {
+        display: inline;
+    }
+
+    aside .sidebar a {
+        width: 100%;
+        height: 3.4rem;
+    }
+
+    aside .sidebar a:last-child {
+        position: absolute;
+        bottom: 5rem;
+    }
+
+    aside .close {
+        display: inline-block;
+        cursor: pointer;
+    }
+
+    .right {
+        width: 94%;
+        margin: 0 auto 4rem;
+    }
+
+    .right .top {
+        position: fixed;
+        top: 0;
+        left: 0;
+        align-items: center;
+        padding: 0 0.8rem;
+        height: 4.6rem;
+        background: var(--color-dark);
+        width: 100%;
+        margin: 0;
+        z-index: 2;
+        box-shadow: 0 1rem 1rem var(--color-light);
+    }
+
+    .right .top .theme-toggler {
+        width: 4.4rem;
+        position: absolute;
+        left: 68%;
+    }
+
+    .right .profile .info p {
+        display: none;
+    }
+
+    .right .top button {
+        display: inline-block;
+        background: red;
+        cursor: pointer;
+        color: var(--color-dark);
+        position: absolute;
+        left: 1rem;
+    }
+
+    .right .top button span {
+        font-size: 2rem;
+    }
+
+    main {
+        margin-left: 0;
+        /* Deja espacio para el aside */
+        /*margin-top: 6rem;
+        min-height: 100vh;
+        /* Asegura que el contenido principal ocupe toda la altura */
+        /*width: auto;
+    /*}
+
+} */
+
+    
+

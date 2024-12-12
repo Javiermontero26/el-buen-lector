@@ -4,12 +4,14 @@ const Entradas = () => {
   const url = 'http://localhost:8080/apiv1/historial/ingreso';
   const [entradaslibros, setEntradasLibros] = useState([]);
 
+  // Función para obtener los datos de la API
   const fetchApi = async () => {
     const response = await fetch(url);
     const responseJSON = await response.json();
     setEntradasLibros(responseJSON);
   };
 
+  // Llamada a la API al montar el componente
   useEffect(() => {
     fetchApi();
   }, []);
@@ -27,7 +29,7 @@ const Entradas = () => {
         </div>
       </div>
 
-      {/* Mostrar la lista de libros */}
+      {/* Lista de Entradas */}
       <table className="table table-striped">
         <thead>
           <tr>
@@ -46,10 +48,18 @@ const Entradas = () => {
               <td className='col-3'>{entradas.fechaIngreso}</td>
               <td className='col-3'>{entradas.motivo}</td>
               <td className='col-1'>
-                <span className="edit" title="Editar" onClick={() => console.log('Editar')}>
+                <span
+                  className="edit"
+                  title="Editar"
+                  onClick={() => console.log('Editar')}
+                >
                   <i className="material-icons">&#xE254;</i>
                 </span>
-                <span className="delete" title="Eliminar" onClick={() => console.log('Eliminar')}>
+                <span
+                  className="delete"
+                  title="Eliminar"
+                  onClick={() => console.log('Eliminar')}
+                >
                   <i className="material-icons">&#xE872;</i>
                 </span>
               </td>

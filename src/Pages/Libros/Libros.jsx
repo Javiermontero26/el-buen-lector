@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Notyf } from 'notyf';
+import Select from 'react-select'; // Importar react-select
 import 'notyf/notyf.min.css';
 
 const Libros = () => {
@@ -13,7 +14,6 @@ const Libros = () => {
   const [modalShow, setModalShow] = useState(false);
   const [modalAutorShow, setModalAutorShow] = useState(false);
 
-  // Crear una instancia de Notyf
   const notyf = new Notyf();
 
   // Obtener los libros desde la API
@@ -32,10 +32,9 @@ const Libros = () => {
 
   // Agregar un nuevo libro a la API
   const agregarLibro = async () => {
-    // Validar si los campos obligatorios están vacíos
     if (!nuevoLibro.titulo || !nuevoLibro.fechaPublicacion || !nuevoLibro.idAutor) {
       notyf.error('Todos los campos son requeridos');
-      return; // Detener el proceso si algún campo requerido está vacío
+      return;
     }
 
     const response = await fetch('http://localhost:8080/apiv1/libros', {
@@ -50,9 +49,9 @@ const Libros = () => {
       fetchLibros(); // Recargar la lista de libros
       setModalShow(false); // Cerrar el modal
       setNuevoLibro({ titulo: '', fechaPublicacion: '', idAutor: '' }); // Limpiar el formulario
-      notyf.success('Libro agregado correctamente'); // Mostrar la alerta de éxito
+      notyf.success('Libro agregado correctamente');
     } else {
-      notyf.error('Este Libro ya existe'); // Mostrar la alerta de error si algo sale mal
+      notyf.error('Este Libro ya existe');
     }
   };
 
@@ -72,8 +71,8 @@ const Libros = () => {
     });
 
     if (response.ok) {
-      setNuevoAutor({ nombre: '' }); 
-      fetchAutores(); 
+      setNuevoAutor({ nombre: '' });
+      fetchAutores();
       setModalAutorShow(false); // Cerrar el modal de autor
       notyf.success('Autor agregado correctamente');
     } else {
@@ -99,6 +98,18 @@ const Libros = () => {
     });
   };
 
+  // Función para limpiar el formulario y cerrar el modal
+  const handleCloseModal = () => {
+    setNuevoLibro({ titulo: '', fechaPublicacion: '', idAutor: '' });
+    setModalShow(false);
+  };
+
+  // Función para limpiar el formulario de autor y cerrar el modal
+  const handleCloseModalAutor = () => {
+    setNuevoAutor({ nombre: '' });
+    setModalAutorShow(false);
+  };
+
   // Exportar a PDF
   const exportToPDF = () => {
     const { jsPDF } = window.jspdf;
@@ -106,18 +117,15 @@ const Libros = () => {
 
     // Título del PDF
     doc.setFontSize(18);
-    doc.text("LISTA DE LIBROS", 14, 16); //aca cambio el titulo de la lista es decorativooo
+    doc.text("LISTA DE LIBROS", 14, 16);
 
-    // Aqui van lo que quiero que se muestre en el pdf
     const tableColumn = ["Título", "Fecha Publicación", "Autor"];
-    // aca van los datos que quiero obtener de mi tabla arriba los titulos aca los datos
     const tableRows = libros.map(libro => [
       libro.titulo,
       libro.fechaPublicacion,
       libro.autor.nombre,
     ]);
 
-    // Creaaar la tabla en el PDF aca se cambia el coloress de la hoja del pdF
     doc.autoTable({
       head: [tableColumn],
       body: tableRows,
@@ -125,14 +133,27 @@ const Libros = () => {
       theme: 'grid',
     });
 
-    // Guardar el PDF
     doc.save('libros.pdf');
   };
 
   useEffect(() => {
-    fetchLibros();  // Cargar libros cuando el componente se monta
-    fetchAutores();  // Cargar autores cuando el componente se monta
+    fetchLibros();
+    fetchAutores();
   }, []);
+
+  // Opciones para React-Select (de los autores)
+  const autorOptions = autores.map((autor) => ({
+    value: autor.idAutor,
+    label: autor.nombre,
+  }));
+
+  // Manejador de cambio en el select de autor
+  const handleSelectChange = (selectedOption) => {
+    setNuevoLibro({
+      ...nuevoLibro,
+      idAutor: selectedOption ? selectedOption.value : '',
+    });
+  };
 
   return (
     <div className="container mt-4">
@@ -158,7 +179,7 @@ const Libros = () => {
           <div className="modal-content">
             <div className="modal-header">
               <h5 className="modal-title">Agregar Libro</h5>
-              <button type="button" className="btn-close" onClick={() => setModalShow(false)} aria-label="Close"></button>
+              <button type="button" className="btn-close" onClick={handleCloseModal} aria-label="Close"></button>
             </div>
             <div className="modal-body">
               <form>
@@ -188,35 +209,36 @@ const Libros = () => {
                 </div>
                 <div className="mb-3">
                   <label htmlFor="idAutor" className="form-label">Autor</label>
-                  <div className="d-flex justify-content-between">
-                    <select
-                      className="form-select"
-                      id="idAutor"
-                      name="idAutor"
-                      value={nuevoLibro.idAutor}
-                      onChange={handleChange}
-                      required
-                    >
-                      <option value="">Selecciona un autor</option>
-                      {autores.map((autor) => (
-                        <option key={autor.idAutor} value={autor.idAutor}>
-                          {autor.nombre}
-                        </option>
-                      ))}
-                    </select>
-                    <button
-                      type="button"
-                      className="btn btn-success ms-2"
-                      onClick={() => setModalAutorShow(true)}
-                    >
-                      Agregar
-                    </button>
+                  <div className="d-flex">
+                    
+                    <div className="flex-grow-1 me-2">
+                      <Select
+                        className="react-select-container"
+                        id="idAutor"
+                        options={autores.map(autor => ({ value: autor.idAutor, label: autor.nombre }))}
+                        onChange={(selectedOption) => setNuevoLibro({ ...nuevoLibro, idAutor: selectedOption ? selectedOption.value : '' })}
+                        value={autores.find(autor => autor.idAutor === nuevoLibro.idAutor) ? { value: nuevoLibro.idAutor, label: autores.find(autor => autor.idAutor === nuevoLibro.idAutor).nombre } : null}
+                        placeholder="Selecciona un autor"
+                        isClearable
+                      />
+                    </div>
+
+                    <div>
+                      <button
+                        type="button"
+                        className="btn btn-success"
+                        onClick={() => setModalAutorShow(true)}
+                      >
+                        Agregar
+                      </button>
+                    </div>
                   </div>
                 </div>
+
               </form>
             </div>
             <div className="modal-footer">
-              <button type="button" className="btn btn-secondary" onClick={() => setModalShow(false)}>
+              <button type="button" className="btn btn-secondary" onClick={handleCloseModal}>
                 Cancelar
               </button>
               <button type="button" className="btn btn-primary" onClick={agregarLibro}>
@@ -233,7 +255,7 @@ const Libros = () => {
           <div className="modal-content">
             <div className="modal-header">
               <h5 className="modal-title">Agregar Autor</h5>
-              <button type="button" className="btn-close" onClick={() => setModalAutorShow(false)} aria-label="Close"></button>
+              <button type="button" className="btn-close" onClick={handleCloseModalAutor} aria-label="Close"></button>
             </div>
             <div className="modal-body">
               <form>
@@ -252,7 +274,7 @@ const Libros = () => {
               </form>
             </div>
             <div className="modal-footer">
-              <button type="button" className="btn btn-secondary" onClick={() => setModalAutorShow(false)}>
+              <button type="button" className="btn btn-secondary" onClick={handleCloseModalAutor}>
                 Cancelar
               </button>
               <button type="button" className="btn btn-primary" onClick={agregarAutor}>
@@ -263,7 +285,7 @@ const Libros = () => {
         </div>
       </div>
 
-      {/* Mostrar la lista de libros */}
+      {/* Tabla de Libros */}
       <table className="table table-striped">
         <thead>
           <tr>
@@ -296,7 +318,6 @@ const Libros = () => {
         </tbody>
       </table>
     </div>
-
   );
 };
 
