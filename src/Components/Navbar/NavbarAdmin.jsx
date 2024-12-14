@@ -50,10 +50,6 @@
                             <span className="material-symbols-sharp">contract_delete</span>
                             <h3>Salidas</h3>
                         </Link>
-                        <Link className={Active('/el_buen_lector/Pages/Reportes/Reportes') ? 'active' : ''} to="/el_buen_lector/Pages/Reportes/Reportes">
-                            <span className="material-symbols-sharp">picture_as_pdf</span>
-                            <h3>Reportes</h3>
-                        </Link>
                         <Link className={Active('/el_buen_lector/Pages/Usuarios/Usuarios') ? 'active' : ''} to="/el_buen_lector/Pages/Usuarios/Usuarios">
                             <span className="material-symbols-sharp">group</span>
                             <h3>Usuarios</h3>

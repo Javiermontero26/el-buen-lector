@@ -5,34 +5,30 @@ const Configuracion = () => {
     <div>
       <h1 className="text-center p-3">MI PERFIL</h1>
       <div>
-        <div className="px-4 sm:px-0">
-          <h3 className="text-base font-semibold text-gray-900">Applicant Information</h3>
-          <p className="mt-1 max-w-2xl text-sm text-gray-500">Personal details and application.</p>
-        </div>
         <div className="mt-6 border-t border-gray-100">
           <dl className="divide-y divide-gray-100">
             <div className="px-4 py-6 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
-              <dt className="text-sm font-medium text-gray-900">Full name</dt>
-              <dd className="mt-1 text-sm text-gray-700 sm:col-span-2 sm:mt-0">Margot Foster</dd>
+              <dt className="text-sm font-medium text-gray-900">Nombre completo</dt>
+              <dd className="mt-1 text-sm text-gray-700 sm:col-span-2 sm:mt-0">Juan Camizan Castillo</dd>
             </div>
             <div className="px-4 py-6 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
-              <dt className="text-sm font-medium text-gray-900">Application for</dt>
-              <dd className="mt-1 text-sm text-gray-700 sm:col-span-2 sm:mt-0">Backend Developer</dd>
+              <dt className="text-sm font-medium text-gray-900">Solicitud para</dt>
+              <dd className="mt-1 text-sm text-gray-700 sm:col-span-2 sm:mt-0">Desarrollador Backend</dd>
             </div>
             <div className="px-4 py-6 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
-              <dt className="text-sm font-medium text-gray-900">Email address</dt>
-              <dd className="mt-1 text-sm text-gray-700 sm:col-span-2 sm:mt-0">margotfoster@example.com</dd>
+              <dt className="text-sm font-medium text-gray-900">Correo electrónico</dt>
+              <dd className="mt-1 text-sm text-gray-700 sm:col-span-2 sm:mt-0">juancamizan@example.com</dd>
             </div>
             <div className="px-4 py-6 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
-              <dt className="text-sm font-medium text-gray-900">Salary expectation</dt>
+              <dt className="text-sm font-medium text-gray-900">Expectativa salarial</dt>
               <dd className="mt-1 text-sm text-gray-700 sm:col-span-2 sm:mt-0">$120,000</dd>
             </div>
             <div className="px-4 py-6 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
-              <dt className="text-sm font-medium text-gray-900">About</dt>
+              <dt className="text-sm font-medium text-gray-900">Acerca de mí</dt>
               <dd className="mt-1 text-sm text-gray-700 sm:col-span-2 sm:mt-0">
-                Fugiat ipsum ipsum deserunt culpa aute sint do nostrud anim incididunt cillum culpa consequat. Excepteur
-                qui ipsum aliquip consequat sint. Sit id mollit nulla mollit nostrud in ea officia proident. Irure nostrud
-                pariatur mollit ad adipisicing reprehenderit deserunt qui eu.
+                Soy un apasionado desarrollador backend con experiencia en la creación de sistemas robustos y eficientes. Me encanta
+                resolver problemas complejos y optimizar procesos para crear soluciones escalables. Mi objetivo es seguir aprendiendo y
+                contribuyendo a proyectos que me desafíen.
               </dd>
             </div>
           </dl>

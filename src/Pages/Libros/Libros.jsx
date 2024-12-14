@@ -1,6 +1,6 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { Notyf } from 'notyf';
-import Select from 'react-select'; // Importar react-select
+import Select from 'react-select';
 import 'notyf/notyf.min.css';
 
 const Libros = () => {
@@ -8,6 +8,7 @@ const Libros = () => {
   const urlAutores = 'http://localhost:8080/apiv1/autores/listar';
 
   const [libros, setLibros] = useState([]);
+  const tablalibros = useRef(null);
   const [autores, setAutores] = useState([]);
   const [nuevoLibro, setNuevoLibro] = useState({ titulo: '', fechaPublicacion: '', idAutor: '' });
   const [nuevoAutor, setNuevoAutor] = useState({ nombre: '' });
@@ -155,9 +156,33 @@ const Libros = () => {
     });
   };
 
+  // DataTable 
+  useEffect(() => {
+    if (libros.length > 0 && !$.fn.dataTable.isDataTable(tablalibros.current)) {
+      $(tablalibros.current).DataTable({
+        paging: true,
+        lengthChange: false,
+        searching: true,
+        ordering: false,
+        info: false,
+        autoWidth: true,
+        responsive: true,
+        language: {
+          search: "Buscar Libro:",
+          paginate: {
+            previous: "Anterior",
+            next: "Siguiente",
+          },
+        },
+      });
+    }
+  }, [libros]);
+
+
+
   return (
     <div className="container mt-4">
-      <div className="card border-top-0">
+      <div className="card border-top-0 mb-2">
         <div className="card-header bg-primary border-top p-3">
           <div className="d-flex align-items-center">
             <h2 className="m-0 text-white flex-grow-1">Lista de Libros</h2>
@@ -173,7 +198,7 @@ const Libros = () => {
         </div>
       </div>
 
-      {/* Modal para Agregar Libro */}
+      {/* Modal Libro */}
       <div className={`modal fade ${modalShow ? 'show' : ''}`} style={{ display: modalShow ? 'block' : 'none' }} tabIndex="-1" aria-hidden="true">
         <div className="modal-dialog">
           <div className="modal-content">
@@ -210,7 +235,7 @@ const Libros = () => {
                 <div className="mb-3">
                   <label htmlFor="idAutor" className="form-label">Autor</label>
                   <div className="d-flex">
-                    
+
                     <div className="flex-grow-1 me-2">
                       <Select
                         className="react-select-container"
@@ -249,7 +274,7 @@ const Libros = () => {
         </div>
       </div>
 
-      {/* Modal para Agregar Autor */}
+      {/* Modal Autor */}
       <div className={`modal fade ${modalAutorShow ? 'show' : ''}`} style={{ display: modalAutorShow ? 'block' : 'none' }} tabIndex="-1" aria-hidden="true">
         <div className="modal-dialog">
           <div className="modal-content">
@@ -286,7 +311,7 @@ const Libros = () => {
       </div>
 
       {/* Tabla de Libros */}
-      <table className="table table-striped">
+      <table ref={tablalibros} className="table table-striped" id="tablaLibros">
         <thead>
           <tr>
             <th hidden>ID Libro</th>

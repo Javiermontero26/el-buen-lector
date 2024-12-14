@@ -12,7 +12,6 @@ import Salidas from './Pages/Salidas/Salidas.jsx';
 import Stock from './Pages/Stock/Stock.jsx';
 import Configuracion from './Pages/Configuracion/Configuracion.jsx';
 import Usuarios from './Pages/Usuarios/Usuarios.jsx';
-import Reportes from './Pages/Reportes/Reportes.jsx';
 const App = () => {
     return (
         <Router>
@@ -43,7 +42,7 @@ const App = () => {
                     path="/el_buen_lector/Pages/Libros/Libros"
                     element={
                         <ProtectedRoute>
-                            <div className="container-fluid">
+                            <div className="container">
                                 <NavUser />
                                 <UsuarioNav />
                                 <main>
@@ -96,22 +95,6 @@ const App = () => {
                                 <UsuarioNav />
                                 <main>
                                     <Stock />
-                                </main>
-                            </div>
-                        </ProtectedRoute>
-                    }
-                />
-
-                {/*Ruta para Reportes (Pagina de Reportes)*/}
-                <Route
-                    path="/el_buen_lector/Pages/Reportes/Reportes"
-                    element={
-                        <ProtectedRoute>
-                            <div className="container">
-                                <NavUser />
-                                <UsuarioNav />
-                                <main>
-                                    <Reportes />
                                 </main>
                             </div>
                         </ProtectedRoute>

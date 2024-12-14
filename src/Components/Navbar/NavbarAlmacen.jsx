@@ -1,10 +1,10 @@
 import React from 'react';
-import { Link, useNavigate, useLocation } from 'react-router-dom';  // Importamos useLocation
+import { Link, useNavigate, useLocation } from 'react-router-dom'; 
 import logo from '../Navbar/logo.png';
 
 const NavbarAlmacen = () => {
     const navigate = useNavigate();
-    const location = useLocation();  // Hook que devuelve la ruta actual
+    const location = useLocation(); 
 
     const handleLogout = () => {
         localStorage.removeItem('isAuthenticated');

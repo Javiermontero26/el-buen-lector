@@ -5,62 +5,85 @@ import Select from 'react-select';  // Importar el componente Select
 const Stock = () => {
   // URLs de la API
   const urlGet = 'http://localhost:8080/apiv1/stocklibros/listar';
-  const urlPost = 'http://localhost:8080/apiv1/stocklibros/registrar';
+  const urlPostEntrada = 'http://localhost:8080/apiv1/stocklibros/registrar';  // Para entradas
+  const urlPostSalida = 'http://localhost:8080/apiv1/stocklibros/salidareg';  // Para salidas
   const urlLibros = 'http://localhost:8080/apiv1/libros/listar';  // URL para obtener los libros
 
   // Estados
   const [stocklibros, setStockLibros] = useState([]);
   const [libros, setLibros] = useState([]);  // Estado para almacenar los libros
-  const [nuevoStock, setNuevoStock] = useState({ idLibro: '', cantidad: '', motivo: '' });
-  const [modalShow, setModalShow] = useState(false);
+  const [nuevoStockEntrada, setNuevoStockEntrada] = useState({ idLibro: '', cantidad: '', motivo: '' });
+  const [nuevoStockSalida, setNuevoStockSalida] = useState({ idLibro: '', cantidad: '', motivo: '' });
+  const [modalShowEntrada, setModalShowEntrada] = useState(false);
+  const [modalShowSalida, setModalShowSalida] = useState(false);
+  const [loading, setLoading] = useState(false);  // Estado para manejar el estado de carga
 
   // Crear una instancia de Notyf para notificaciones
   const notyf = new Notyf();
 
   // Obtener stock de libros
   const fetchStock = async () => {
-    const response = await fetch(urlGet);
-    const responseJSON = await response.json();
-    setStockLibros(responseJSON);
+    try {
+      setLoading(true);
+      const response = await fetch(urlGet);
+      const responseJSON = await response.json();
+      setStockLibros(responseJSON);
+    } catch (error) {
+      console.error('Error al obtener stock:', error);
+      notyf.error('Error al obtener stock');
+    } finally {
+      setLoading(false);
+    }
   };
 
   // Obtener libros para el select en el modal
   const fetchLibros = async () => {
-    const response = await fetch(urlLibros);
-    const responseJSON = await response.json();
-    setLibros(responseJSON);
+    try {
+      setLoading(true);
+      const response = await fetch(urlLibros);
+      const responseJSON = await response.json();
+      setLibros(responseJSON);
+    } catch (error) {
+      console.error('Error al obtener libros:', error);
+      notyf.error('Error al obtener libros');
+    } finally {
+      setLoading(false);
+    }
   };
 
-  // Agregar nuevo stock
-  const agregarStock = async () => {
-    // Validar si los campos son válidos
-    if (!nuevoStock.idLibro || !nuevoStock.cantidad || !nuevoStock.motivo) {
+  // Agregar entrada de stock
+  const agregarEntrada = async () => {
+    if (!nuevoStockEntrada.idLibro || !nuevoStockEntrada.cantidad || !nuevoStockEntrada.motivo) {
       notyf.error('Todos los campos son requeridos');
       return;
     }
 
+    if (isNaN(nuevoStockEntrada.cantidad) || parseInt(nuevoStockEntrada.cantidad) <= 0) {
+      notyf.error('La cantidad debe ser un número positivo');
+      return;
+    }
+
     try {
-      const response = await fetch(urlPost, {
+      const response = await fetch(urlPostEntrada, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-          idLibro: parseInt(nuevoStock.idLibro),  // Asegurarnos de que idLibro sea un número
-          cantidad: parseInt(nuevoStock.cantidad), // Asegurarnos de que la cantidad sea un número
-          motivo: nuevoStock.motivo, // El motivo
+          idLibro: parseInt(nuevoStockEntrada.idLibro),
+          cantidad: parseInt(nuevoStockEntrada.cantidad),
+          motivo: nuevoStockEntrada.motivo,
         }),
       });
 
       if (response.ok) {
-        fetchStock(); // Recargar la lista de stock
-        setNuevoStock({ idLibro: '', cantidad: '', motivo: '' }); // Limpiar los campos del formulario
-        setModalShow(false); // Cerrar el modal
-        notyf.success('Stock agregado correctamente');
+        fetchStock();
+        setNuevoStockEntrada({ idLibro: '', cantidad: '', motivo: '' });
+        setModalShowEntrada(false);
+        notyf.success('Entrada de stock agregada correctamente');
       } else {
         const errorData = await response.json();
-        console.error('Error al agregar stock:', errorData);
-        notyf.error('Error al agregar stock: ' + (errorData.message || 'Error desconocido'));
+        notyf.error('Error al agregar entrada: ' + (errorData.message || 'Error desconocido'));
       }
     } catch (error) {
       console.error('Error en la solicitud:', error);
@@ -68,43 +91,94 @@ const Stock = () => {
     }
   };
 
-  // Función para limpiar el formulario y cerrar el modal
-  const handleCloseModal = () => {
-    setNuevoStock({ idLibro: '', cantidad: '', motivo: '' });  // Limpiar el estado
-    setModalShow(false);  // Cerrar el modal
+  // Agregar salida de stock
+  const agregarSalida = async () => {
+    if (!nuevoStockSalida.idLibro || !nuevoStockSalida.cantidad || !nuevoStockSalida.motivo) {
+      notyf.error('Todos los campos son requeridos');
+      return;
+    }
+
+    if (isNaN(nuevoStockSalida.cantidad) || parseInt(nuevoStockSalida.cantidad) <= 0) {
+      notyf.error('La cantidad debe ser un número positivo');
+      return;
+    }
+
+    try {
+      const response = await fetch(urlPostSalida, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          idLibro: parseInt(nuevoStockSalida.idLibro),
+          cantidad: parseInt(nuevoStockSalida.cantidad),
+          motivo: nuevoStockSalida.motivo,
+        }),
+      });
+
+      if (response.ok) {
+        fetchStock();
+        setNuevoStockSalida({ idLibro: '', cantidad: '', motivo: '' });
+        setModalShowSalida(false);
+        notyf.success('Salida de stock agregada correctamente');
+      } else {
+        const errorData = await response.json();
+        notyf.error('Error al agregar salida: ' + (errorData.message || 'Error desconocido'));
+      }
+    } catch (error) {
+      console.error('Error en la solicitud:', error);
+      notyf.error('Hubo un error al conectar con el servidor.');
+    }
+  };
+
+  // Función para cerrar los modales
+  const handleCloseModalEntrada = () => {
+    setNuevoStockEntrada({ idLibro: '', cantidad: '', motivo: '' });
+    setModalShowEntrada(false);
+  };
+
+  const handleCloseModalSalida = () => {
+    setNuevoStockSalida({ idLibro: '', cantidad: '', motivo: '' });
+    setModalShowSalida(false);
   };
 
   useEffect(() => {
-    fetchStock();  // Cargar stock cuando el componente se monta
-    fetchLibros();  // Cargar los libros cuando el componente se monta
+    fetchStock();
+    fetchLibros();
   }, []);
 
   // Opciones para React-Select
   const libroOptions = libros.map((libro) => ({
     value: libro.idLibro,
-    label: libro.titulo
+    label: libro.titulo,
+    cantidad: libro.cantidad,
   }));
 
-  // Manejador de cambio de selección en React-Select
-  const handleSelectChange = (selectedOption) => {
-    setNuevoStock({
-      ...nuevoStock,
+  const handleSelectChangeEntrada = (selectedOption) => {
+    setNuevoStockEntrada({
+      ...nuevoStockEntrada,
+      idLibro: selectedOption ? selectedOption.value : ''
+    });
+  };
+
+  const handleSelectChangeSalida = (selectedOption) => {
+    setNuevoStockSalida({
+      ...nuevoStockSalida,
       idLibro: selectedOption ? selectedOption.value : ''
     });
   };
 
   return (
     <div className="container mt-4">
-      {/* Card Header */}
-      <div className="card border-top-0">
+      <div className="card border-top-0 mb-2">
         <div className="card-header bg-primary border-top p-3">
           <div className="d-flex justify-content-between align-items-center">
             <h2 className="m-0 text-white">Stock de Libros</h2>
             <div>
-              <button className="btn btn-light" onClick={() => setModalShow(true)}>
+              <button className="btn btn-light" onClick={() => setModalShowEntrada(true)}>
                 Agregar Entrada
               </button>
-              <button className="btn btn-light ms-2">
+              <button className="btn btn-light ms-2" onClick={() => setModalShowSalida(true)}>
                 Agregar Salida
               </button>
             </div>
@@ -112,14 +186,14 @@ const Stock = () => {
         </div>
       </div>
 
-      {/* Modal para Agregar Stock */}
-      {modalShow && (
+      {/* Modal Entrada */}
+      {modalShowEntrada && (
         <div className="modal show" style={{ display: 'block' }} tabIndex="-1" aria-hidden="true">
           <div className="modal-dialog">
             <div className="modal-content">
               <div className="modal-header">
                 <h5 className="modal-title">Agregar Entrada</h5>
-                <button type="button" className="btn-close" onClick={handleCloseModal} aria-label="Close"></button>
+                <button type="button" className="btn-close" onClick={handleCloseModalEntrada} aria-label="Close"></button>
               </div>
               <div className="modal-body">
                 <div className="mb-3">
@@ -127,10 +201,10 @@ const Stock = () => {
                   <Select
                     id="idLibro"
                     options={libroOptions}
-                    onChange={handleSelectChange}
-                    value={libroOptions.find((option) => option.value === nuevoStock.idLibro)}
+                    onChange={handleSelectChangeEntrada}
+                    value={libroOptions.find((option) => option.value === nuevoStockEntrada.idLibro)}
                     placeholder="Selecciona un libro"
-                    isClearable//={false}
+                    isClearable
                   />
                 </div>
                 <div className="mb-3">
@@ -140,8 +214,8 @@ const Stock = () => {
                     className="form-control"
                     id="cantidad"
                     name="cantidad"
-                    value={nuevoStock.cantidad}
-                    onChange={(e) => setNuevoStock({ ...nuevoStock, cantidad: e.target.value })}
+                    value={nuevoStockEntrada.cantidad}
+                    onChange={(e) => setNuevoStockEntrada({ ...nuevoStockEntrada, cantidad: e.target.value })}
                     required
                   />
                 </div>
@@ -155,27 +229,10 @@ const Stock = () => {
                         id="motivoCompra"
                         name="motivo"
                         value="Compra"
-                        checked={nuevoStock.motivo === "Compra"}
-                        onChange={(e) => setNuevoStock({ ...nuevoStock, motivo: e.target.value })}
-                        required
+                        checked={nuevoStockEntrada.motivo === "Compra"}
+                        onChange={(e) => setNuevoStockEntrada({ ...nuevoStockEntrada, motivo: e.target.value })}
                       />
-                      <label className="form-check-label" htmlFor="motivoCompra">
-                        Compra
-                      </label>
-                    </div>
-                    <div className="form-check form-check-inline">
-                      <input
-                        type="radio"
-                        className="form-check-input bg-secondary"
-                        id="motivoVenta"
-                        name="motivo"
-                        value="Venta"
-                        checked={nuevoStock.motivo === "Venta"}
-                        onChange={(e) => setNuevoStock({ ...nuevoStock, motivo: e.target.value })}
-                      />
-                      <label className="form-check-label" htmlFor="motivoVenta">
-                        Venta
-                      </label>
+                      <label className="form-check-label" htmlFor="motivoCompra">Compra</label>
                     </div>
                     <div className="form-check form-check-inline">
                       <input
@@ -183,31 +240,97 @@ const Stock = () => {
                         className="form-check-input bg-secondary"
                         id="motivoDevolucion"
                         name="motivo"
-                        value="Devolución"
-                        checked={nuevoStock.motivo === "Devolución"}
-                        onChange={(e) => setNuevoStock({ ...nuevoStock, motivo: e.target.value })}
+                        value="Devolucion"
+                        checked={nuevoStockEntrada.motivo === "Devolucion"}
+                        onChange={(e) => setNuevoStockEntrada({ ...nuevoStockEntrada, motivo: e.target.value })}
                       />
-                      <label className="form-check-label" htmlFor="motivoDevolucion">
-                        Devolución
-                      </label>
+                      <label className="form-check-label" htmlFor="motivoDevolucion">Donación</label>
                     </div>
                   </div>
                 </div>
               </div>
               <div className="modal-footer">
-                <button type="button" className="btn btn-secondary" onClick={handleCloseModal}>
-                  Cerrar
-                </button>
-                <button type="button" className="btn btn-primary" onClick={agregarStock}>
-                  Guardar
-                </button>
+                <button type="button" className="btn btn-secondary" onClick={handleCloseModalEntrada}>Cerrar</button>
+                <button type="button" className="btn btn-primary" onClick={agregarEntrada}>Agregar Entrada</button>
               </div>
             </div>
           </div>
         </div>
       )}
 
-      {/* Tabla de Stock */}
+      {/* Modal Salida */}
+      {modalShowSalida && (
+        <div className="modal show" style={{ display: 'block' }} tabIndex="-1" aria-hidden="true">
+          <div className="modal-dialog">
+            <div className="modal-content">
+              <div className="modal-header">
+                <h5 className="modal-title">Agregar Salida</h5>
+                <button type="button" className="btn-close" onClick={handleCloseModalSalida} aria-label="Close"></button>
+              </div>
+              <div className="modal-body">
+                <div className="mb-3">
+                  <label htmlFor="idLibro" className="form-label">Selecciona un Libro</label>
+                  <Select
+                    id="idLibro"
+                    options={libroOptions}
+                    onChange={handleSelectChangeSalida}
+                    value={libroOptions.find((option) => option.value === nuevoStockSalida.idLibro)}
+                    placeholder="Selecciona un libro"
+                    isClearable
+                  />
+                </div>
+                <div className="mb-3">
+                  <label htmlFor="cantidad" className="form-label">Cantidad</label>
+                  <input
+                    type="number"
+                    className="form-control"
+                    id="cantidad"
+                    name="cantidad"
+                    value={nuevoStockSalida.cantidad}
+                    onChange={(e) => setNuevoStockSalida({ ...nuevoStockSalida, cantidad: e.target.value })}
+                    required
+                  />
+                </div>
+                <div className="mb-3">
+                  <label htmlFor="motivo" className="form-label">Motivo</label>
+                  <div id="motivo" name="motivo" className="d-flex">
+                    <div className="form-check form-check-inline">
+                      <input
+                        type="radio"
+                        className="form-check-input bg-secondary"
+                        id="motivoVenta"
+                        name="motivo"
+                        value="Venta"
+                        checked={nuevoStockSalida.motivo === "Venta"}
+                        onChange={(e) => setNuevoStockSalida({ ...nuevoStockSalida, motivo: e.target.value })}
+                      />
+                      <label className="form-check-label" htmlFor="motivoVenta">Venta</label>
+                    </div>
+                    <div className="form-check form-check-inline">
+                      <input
+                        type="radio"
+                        className="form-check-input bg-secondary"
+                        id="motivoPerdida"
+                        name="motivo"
+                        value="Pérdida"
+                        checked={nuevoStockSalida.motivo === "Pérdida"}
+                        onChange={(e) => setNuevoStockSalida({ ...nuevoStockSalida, motivo: e.target.value })}
+                      />
+                      <label className="form-check-label" htmlFor="motivoPerdida">Pérdida</label>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div className="modal-footer">
+                <button type="button" className="btn btn-secondary" onClick={handleCloseModalSalida}>Cerrar</button>
+                <button type="button" className="btn btn-primary" onClick={agregarSalida}>Agregar Salida</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+      
+      {/* lista de stock */}
       <table className="table table-striped">
         <thead>
           <tr>

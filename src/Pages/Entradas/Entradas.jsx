@@ -1,8 +1,9 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 
 const Entradas = () => {
   const url = 'http://localhost:8080/apiv1/historial/ingreso';
   const [entradaslibros, setEntradasLibros] = useState([]);
+  const tablaEntradas = useRef(null);
 
   // Función para obtener los datos de la API
   const fetchApi = async () => {
@@ -16,21 +17,40 @@ const Entradas = () => {
     fetchApi();
   }, []);
 
+  // DataTable 
+  useEffect(() => {
+    if (entradaslibros.length > 0 && !$.fn.dataTable.isDataTable(tablaEntradas.current)) {
+      $(tablaEntradas.current).DataTable({
+        paging: true,
+        lengthChange: false,
+        searching: true,
+        ordering: false,
+        info: false,
+        autoWidth: true,
+        responsive: true,
+        language: {
+          search: "Buscar Entradas:",
+          paginate: {
+            previous: "Anterior",
+            next: "Siguiente",
+          },
+        },
+      });
+    }
+  }, [entradaslibros]);
+
   return (
     <div className="container mt-4">
-      <div className="card border-top-0">
+      <div className="card border-top-0 mb-2">
         <div className="card-header bg-primary border-top p-3">
           <div className="d-flex justify-content-between align-items-center">
             <h2 className="m-0 text-white">Entrada de Libros</h2>
-            <button className="btn btn-light" onClick={() => console.log('Agregar')}>
-              Agregar
-            </button>
           </div>
         </div>
       </div>
 
       {/* Lista de Entradas */}
-      <table className="table table-striped">
+      <table ref={tablaEntradas} className="table table-striped" id='tablaEntradas'>
         <thead>
           <tr>
             <th>Libro</th>

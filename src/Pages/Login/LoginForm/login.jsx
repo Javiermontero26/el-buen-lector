@@ -20,7 +20,7 @@ const Login = () => {
     maxNotifications: 1,
   });
 
-  // Credenciales válidas para administrador y almacenero
+  // Credenciales válidas para administrador y almacenerooo
   const validCredentials = {
     username: 'admin',
     password: '123',
@@ -33,7 +33,7 @@ const Login = () => {
     role: 'almacen',
   };
 
-  // Estado del componente
+  // Estado del componentes
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [messageOfTheDay, setMessageOfTheDay] = useState('');
