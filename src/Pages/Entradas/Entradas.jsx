@@ -81,43 +81,45 @@ const Entradas = () => {
       </div>
 
       {/* Lista de Entradas */}
-      <table ref={tablaEntradas} className="table table-striped" id='tablaEntradas'>
-        <thead>
-          <tr>
-            <th>Libro</th>
-            <th>Cantidad</th>
-            <th>Fecha Ingreso</th>
-            <th>Motivo</th>
-            <th>Acciones</th>
-          </tr>
-        </thead>
-        <tbody>
-          {entradaslibros.map((entradas) => (
-            <tr key={entradas.idIngreso}>
-              <td className='col-4'>{entradas.libro.titulo}</td>
-              <td className='col-1'>{entradas.cantidad}</td>
-              <td className='col-3'>{entradas.fechaIngreso}</td>
-              <td className='col-3'>{entradas.motivo}</td>
-              <td className='col-1'>
-                <span
-                  className="edit"
-                  title="Editar"
-                  onClick={() => console.log('Editar')}
-                >
-                  <i className="material-icons">&#xE254;</i>
-                </span>
-                <span
-                  className="delete"
-                  title="Eliminar"
-                  onClick={() => console.log('Eliminar')}
-                >
-                  <i className="material-icons">&#xE872;</i>
-                </span>
-              </td>
+      <div className="table-container">
+        <table ref={tablaEntradas} className="table table-striped" id='tablaEntradas'>
+          <thead>
+            <tr>
+              <th>Libro</th>
+              <th>Cantidad</th>
+              <th>Fecha Ingreso</th>
+              <th>Motivo</th>
+              <th>Acciones</th>
             </tr>
-          ))}
-        </tbody>
-      </table>
+          </thead>
+          <tbody>
+            {entradaslibros.map((entradas) => (
+              <tr key={entradas.idIngreso}>
+                <td className='col-4'>{entradas.libro.titulo}</td>
+                <td className='col-1'>{entradas.cantidad}</td>
+                <td className='col-3'>{entradas.fechaIngreso}</td>
+                <td className='col-3'>{entradas.motivo}</td>
+                <td className='col-1'>
+                  <span
+                    className="edit"
+                    title="Editar"
+                    onClick={() => console.log('Editar')}
+                  >
+                    <i className="material-icons">&#xE254;</i>
+                  </span>
+                  <span
+                    className="delete"
+                    title="Eliminar"
+                    onClick={() => console.log('Eliminar')}
+                  >
+                    <i className="material-icons">&#xE872;</i>
+                  </span>
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
     </div>
   );
 };

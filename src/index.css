@@ -232,6 +232,32 @@ main {
 }
 
 
+/* Establece un contenedor para permitir el desplazamiento horizontal */
+.table-container {
+    overflow-x: auto;  /* Permite el desplazamiento horizontal si la tabla es más ancha que el contenedor */
+    -webkit-overflow-scrolling: touch;  /* Mejora el desplazamiento en dispositivos iOS */
+    max-width: 100%;  /* Asegura que el contenedor no se desborde */
+  }
+  
+  /* Asegura que la tabla ocupe todo el ancho posible */
+  .table {
+    width: 100%;
+    table-layout: auto;  /* Permite que las celdas se ajusten al contenido */
+    border-collapse: collapse;  /* Hace que las celdas se junten sin espacio entre ellas */
+  }
+  
+  th, td {
+    padding: 8px;
+    text-align: left;
+  }
+  
+  th {
+    background-color: #f8f9fa;
+    font-weight: bold;
+  }
+  
+
+
 /* Tables */
 
 @media screen and (max-width: 1100px) {
@@ -249,7 +275,7 @@ main {
     }
 
     aside .logo {
-        margin-left: 1.6rem;
+        margin-left: 0.9rem;
     }
 
     aside .logo h2 {
@@ -313,7 +339,7 @@ main {
     }
  
     aside .logo {
-        margin-left: -0.2rem;
+        margin-left: -0.4rem;
     }
 
     aside .logo h2 {
@@ -327,7 +353,7 @@ main {
     aside .sidebar a {
         display: flex;
         color: var(--color-info-light);
-        gap: 0.2rem;
+        gap: 0;
         align-items: center;
         position: relative;
         height: 3.7rem;
@@ -336,7 +362,7 @@ main {
     }
 
     aside .sidebar a span {
-        font-size: 1.7rem;
+        font-size: 1.5rem;
         transition: none;
     }
 
@@ -346,7 +372,7 @@ main {
     
 
     main {
-        margin-left: 0;
+        margin-left: 15%;
         /* Deja espacio para el aside */
         margin-top: 6rem;
         min-height: 100vh;
@@ -355,6 +381,7 @@ main {
     }
 
 }
+
 
     
 

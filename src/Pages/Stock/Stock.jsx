@@ -195,9 +195,9 @@ const Stock = () => {
           <div className="d-flex justify-content-between align-items-center">
             <h2 className="m-0 text-white">Stock de Libros</h2>
             <div>
-            <button className="btn btn-light ms-2" onClick={exportToPDF}>
-              <i className="bi bi-file-earmark-pdf me-2 text-danger h6"></i>Exportar a PDF
-            </button>
+              <button className="btn btn-light ms-2" onClick={exportToPDF}>
+                <i className="bi bi-file-earmark-pdf me-2 text-danger h6"></i>Exportar a PDF
+              </button>
               <button className="btn btn-light ms-2" onClick={() => setModalShowEntrada(true)}>
                 Agregar Entrada
               </button>
@@ -356,22 +356,24 @@ const Stock = () => {
       )}
 
       {/* Tabla de Stock */}
-      <table className="table table-striped">
-        <thead>
-          <tr>
-            <th>Libro</th>
-            <th>Stock</th>
-          </tr>
-        </thead>
-        <tbody>
-          {stocklibros.map((skt) => (
-            <tr key={skt.tituloLibro}>
-              <td>{skt.tituloLibro}</td>
-              <td>{skt.cantidad}</td>
+      <div className="table-container">
+        <table className="table table-striped">
+          <thead>
+            <tr>
+              <th>Libro</th>
+              <th>Stock</th>
             </tr>
-          ))}
-        </tbody>
-      </table>
+          </thead>
+          <tbody>
+            {stocklibros.map((skt) => (
+              <tr key={skt.tituloLibro}>
+                <td>{skt.tituloLibro}</td>
+                <td>{skt.cantidad}</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
 
     </div>
   );

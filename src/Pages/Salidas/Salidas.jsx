@@ -82,43 +82,45 @@ const Salidas = () => {
       </div>
 
       {/* Lista de Entradas */}
-      <table ref={tablaSalidas} className="table table-striped" id="tablaSalidas">
-        <thead>
-          <tr>
-            <th>Libro</th>
-            <th>Cantidad</th>
-            <th>Fecha Ingreso</th>
-            <th>Motivo</th>
-            <th>Acciones</th>
-          </tr>
-        </thead>
-        <tbody>
-          {salidaslibros.map((salidas) => (
-            <tr key={salidas.idSalida}>
-              <td className='col-4'>{salidas.libro.titulo}</td>
-              <td className='col-1'>{salidas.cantidad}</td>
-              <td className='col-3'>{salidas.fechaIngreso}</td>
-              <td className='col-3'>{salidas.motivo}</td>
-              <td className='col-1'>
-                <span
-                  className="edit"
-                  title="Editar"
-                  onClick={() => console.log('Editar')}
-                >
-                  <i className="material-icons">&#xE254;</i>
-                </span>
-                <span
-                  className="delete"
-                  title="Eliminar"
-                  onClick={() => console.log('Eliminar')}
-                >
-                  <i className="material-icons">&#xE872;</i>
-                </span>
-              </td>
+      <div className="table-container">
+        <table ref={tablaSalidas} className="table table-striped" id="tablaSalidas">
+          <thead>
+            <tr>
+              <th>Libro</th>
+              <th>Cantidad</th>
+              <th>Fecha Ingreso</th>
+              <th>Motivo</th>
+              <th>Acciones</th>
             </tr>
-          ))}
-        </tbody>
-      </table>
+          </thead>
+          <tbody>
+            {salidaslibros.map((salidas) => (
+              <tr key={salidas.idSalida}>
+                <td className='col-4'>{salidas.libro.titulo}</td>
+                <td className='col-1'>{salidas.cantidad}</td>
+                <td className='col-3'>{salidas.fechaIngreso}</td>
+                <td className='col-3'>{salidas.motivo}</td>
+                <td className='col-1'>
+                  <span
+                    className="edit"
+                    title="Editar"
+                    onClick={() => console.log('Editar')}
+                  >
+                    <i className="material-icons">&#xE254;</i>
+                  </span>
+                  <span
+                    className="delete"
+                    title="Eliminar"
+                    onClick={() => console.log('Eliminar')}
+                  >
+                    <i className="material-icons">&#xE872;</i>
+                  </span>
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
     </div>
   );
 };

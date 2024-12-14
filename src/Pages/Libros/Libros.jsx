@@ -311,37 +311,41 @@ const Libros = () => {
       </div>
 
       {/* Tabla de Libros */}
-      <table ref={tablalibros} className="table table-striped" id="tablaLibros">
-        <thead>
-          <tr>
-            <th hidden>ID Libro</th>
-            <th>Titulo</th>
-            <th>Fecha Publicación</th>
-            <th hidden>ID Autor</th>
-            <th>Autor</th>
-            <th>Acciones</th>
-          </tr>
-        </thead>
-        <tbody>
-          {libros.map((libro) => (
-            <tr key={libro.id}>
-              <td hidden>{libro.idLibro}</td>
-              <td>{libro.titulo}</td>
-              <td>{libro.fechaPublicacion}</td>
-              <td hidden>{libro.autor.idAutor}</td>
-              <td>{libro.autor.nombre}</td>
-              <td>
-                <span className="edit" title="Editar" onClick={() => openModal('edit')}>
-                  <i className="material-icons">&#xE254;</i>
-                </span>
-                <span className="delete" title="Eliminar" onClick={() => openModal('delete')}>
-                  <i className="material-icons">&#xE872;</i>
-                </span>
-              </td>
+      <div className="table-container">
+        <table ref={tablalibros} className="table table-striped" id="tablaLibros">
+          <thead>
+            <tr>
+              <th hidden>ID Libro</th>
+              <th>Titulo</th>
+              <th>Fecha Publicación</th>
+              <th hidden>ID Autor</th>
+              <th>Autor</th>
+              <th>Acciones</th>
             </tr>
-          ))}
-        </tbody>
-      </table>
+          </thead>
+          <tbody>
+            {libros.map((libro) => (
+              <tr key={libro.id}>
+                <td hidden>{libro.idLibro}</td>
+                <td>{libro.titulo}</td>
+                <td>{libro.fechaPublicacion}</td>
+                <td hidden>{libro.autor.idAutor}</td>
+                <td>{libro.autor.nombre}</td>
+                <td>
+                  <span className="edit" title="Editar" onClick={() => openModal('edit')}>
+                    <i className="material-icons">&#xE254;</i>
+                  </span>
+                  <span className="delete" title="Eliminar" onClick={() => openModal('delete')}>
+                    <i className="material-icons">&#xE872;</i>
+                  </span>
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+
+
     </div>
   );
 };
