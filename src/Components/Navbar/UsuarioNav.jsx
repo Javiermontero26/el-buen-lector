@@ -1,9 +1,9 @@
 import React from 'react';
-import NavbarAdmin from './NavbarAdmin';  // Importamos el navbar de Admin
-import NavbarAlmacen from './NavbarAlmacen';  // Importamos el navbar de Almacen
+import NavbarAdmin from './NavbarAdmin';
+import NavbarAlmacen from './NavbarAlmacen';
 
 const UsuarioNav = () => {
-    const role = localStorage.getItem('role');  // Obtenemos el rol del localStorage
+    const role = localStorage.getItem('role');
 
     return (
         <div>

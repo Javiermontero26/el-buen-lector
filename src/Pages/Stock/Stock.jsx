@@ -16,38 +16,31 @@ const Stock = () => {
   const [nuevoStockSalida, setNuevoStockSalida] = useState({ idLibro: '', cantidad: '', motivo: '' });
   const [modalShowEntrada, setModalShowEntrada] = useState(false);
   const [modalShowSalida, setModalShowSalida] = useState(false);
-  const [loading, setLoading] = useState(false);  // Estado para manejar el estado de carga
 
   // Crear una instancia de Notyf para notificaciones
   const notyf = new Notyf();
 
-  // Obtener stock de libros
+  // Obtener Stock desde la API
   const fetchStock = async () => {
     try {
-      setLoading(true);
       const response = await fetch(urlGet);
       const responseJSON = await response.json();
       setStockLibros(responseJSON);
     } catch (error) {
       console.error('Error al obtener stock:', error);
-      notyf.error('Error al obtener stock');
-    } finally {
-      setLoading(false);
+      notyf.error('Error al cargar el stock');
     }
   };
 
-  // Obtener libros para el select en el modal
+  // Obtener los libros desde la API
   const fetchLibros = async () => {
     try {
-      setLoading(true);
       const response = await fetch(urlLibros);
       const responseJSON = await response.json();
       setLibros(responseJSON);
     } catch (error) {
       console.error('Error al obtener libros:', error);
-      notyf.error('Error al obtener libros');
-    } finally {
-      setLoading(false);
+      notyf.error('Error al cargar los libros');
     }
   };
 
@@ -151,7 +144,6 @@ const Stock = () => {
   const libroOptions = libros.map((libro) => ({
     value: libro.idLibro,
     label: libro.titulo,
-    cantidad: libro.cantidad,
   }));
 
   const handleSelectChangeEntrada = (selectedOption) => {
@@ -168,14 +160,45 @@ const Stock = () => {
     });
   };
 
+
+  // Exportar a PDF
+  const exportToPDF = () => {
+    const { jsPDF } = window.jspdf;
+    const doc = new jsPDF();
+
+    // Título del PDF
+    doc.setFontSize(18);
+    doc.setTextColor(255, 0, 0);
+    doc.text("LISTA DE STOCK DE LIBROS", 14, 16);
+
+    const tableColumn = ["Libro", "Stock"];
+    const tableRows = stocklibros.map(skt => [
+      skt.tituloLibro,
+      skt.cantidad,
+    ]);
+
+    doc.autoTable({
+      head: [tableColumn],
+      body: tableRows,
+      startY: 20,
+      theme: 'grid',
+    });
+
+    doc.save('stock.pdf');
+  };
+
   return (
     <div className="container mt-4">
-      <div className="card border-top-0 mb-2">
+      {/* Card Header */}
+      <div className="card border-top-0">
         <div className="card-header bg-primary border-top p-3">
           <div className="d-flex justify-content-between align-items-center">
             <h2 className="m-0 text-white">Stock de Libros</h2>
             <div>
-              <button className="btn btn-light" onClick={() => setModalShowEntrada(true)}>
+            <button className="btn btn-light ms-2" onClick={exportToPDF}>
+              <i className="bi bi-file-earmark-pdf me-2 text-danger h6"></i>Exportar a PDF
+            </button>
+              <button className="btn btn-light ms-2" onClick={() => setModalShowEntrada(true)}>
                 Agregar Entrada
               </button>
               <button className="btn btn-light ms-2" onClick={() => setModalShowSalida(true)}>
@@ -186,9 +209,9 @@ const Stock = () => {
         </div>
       </div>
 
-      {/* Modal Entrada */}
+      {/* Modal para Agregar Entrada */}
       {modalShowEntrada && (
-        <div className="modal show" style={{ display: 'block' }} tabIndex="-1" aria-hidden="true">
+        <div className="modal show" style={{ display: 'block' }} tabIndex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden={!modalShowEntrada} {...(modalShowEntrada && { inert: true })}>
           <div className="modal-dialog">
             <div className="modal-content">
               <div className="modal-header">
@@ -240,11 +263,11 @@ const Stock = () => {
                         className="form-check-input bg-secondary"
                         id="motivoDevolucion"
                         name="motivo"
-                        value="Devolucion"
-                        checked={nuevoStockEntrada.motivo === "Devolucion"}
+                        value="Devolución"
+                        checked={nuevoStockEntrada.motivo === "Devolución"}
                         onChange={(e) => setNuevoStockEntrada({ ...nuevoStockEntrada, motivo: e.target.value })}
                       />
-                      <label className="form-check-label" htmlFor="motivoDevolucion">Donación</label>
+                      <label className="form-check-label" htmlFor="motivoDevolucion">Devolución</label>
                     </div>
                   </div>
                 </div>
@@ -258,7 +281,9 @@ const Stock = () => {
         </div>
       )}
 
-      {/* Modal Salida */}
+
+
+      {/* Modal para Agregar Salida */}
       {modalShowSalida && (
         <div className="modal show" style={{ display: 'block' }} tabIndex="-1" aria-hidden="true">
           <div className="modal-dialog">
@@ -329,8 +354,8 @@ const Stock = () => {
           </div>
         </div>
       )}
-      
-      {/* lista de stock */}
+
+      {/* Tabla de Stock */}
       <table className="table table-striped">
         <thead>
           <tr>
@@ -347,6 +372,7 @@ const Stock = () => {
           ))}
         </tbody>
       </table>
+
     </div>
   );
 };
