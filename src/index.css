@@ -232,31 +232,6 @@ main {
 }
 
 
-/* Establece un contenedor para permitir el desplazamiento horizontal */
-.table-container {
-    overflow-x: auto;  /* Permite el desplazamiento horizontal si la tabla es más ancha que el contenedor */
-    -webkit-overflow-scrolling: touch;  /* Mejora el desplazamiento en dispositivos iOS */
-    max-width: 100%;  /* Asegura que el contenedor no se desborde */
-  }
-  
-  /* Asegura que la tabla ocupe todo el ancho posible */
-  .table {
-    width: 100%;
-    table-layout: auto;  /* Permite que las celdas se ajusten al contenido */
-    border-collapse: collapse;  /* Hace que las celdas se junten sin espacio entre ellas */
-  }
-  
-  th, td {
-    padding: 8px;
-    text-align: left;
-  }
-  
-  th {
-    background-color: #f8f9fa;
-    font-weight: bold;
-  }
-  
-
 
 /* Tables */
 
@@ -302,12 +277,55 @@ main {
         transition: all 300ms ease;
     }
 
-    
+
     .right .top .theme-toggler {
         width: 4.4rem;
         margin: 1rem;
         position: absolute;
         left: 57%;
+    }
+
+    /*Tablas*/
+
+    .table-container {
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+        max-width: 100%;
+    }
+
+
+    .table {
+        width: 100%;
+        table-layout: auto;
+        border-collapse: collapse;
+    }
+
+    th,
+    td {
+        padding: 8px;
+        text-align: left;
+    }
+
+    th {
+        background-color: #f8f9fa;
+        font-weight: bold;
+    }
+
+    .container .card h2 {
+        display: flex;
+        width: 100%;
+        font-size: 22px;
+    }
+
+    .container .card button {
+        width: 100%;
+        margin: 2px;
+        display: flexbox;
+    }
+
+    .container .card button i {
+        display: none;
+
     }
 
 }
@@ -337,7 +355,7 @@ main {
         transition: none;
         text-decoration: none;
     }
- 
+
     aside .logo {
         margin-left: -0.4rem;
     }
@@ -369,7 +387,7 @@ main {
     aside .sidebar a:hover span {
         margin-left: 0;
     }
-    
+
 
     main {
         margin-left: 15%;
@@ -380,8 +398,47 @@ main {
         width: auto;
     }
 
+    /*Tablas*/
+
+    .table-container {
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+        max-width: 100%;
+    }
+
+
+    .table {
+        width: 100%;
+        table-layout: auto;
+        border-collapse: collapse;
+    }
+
+    th,
+    td {
+        padding: 8px;
+        text-align: left;
+    }
+
+    th {
+        background-color: #f8f9fa;
+        font-weight: bold;
+    }
+
+    .container .card h2 {
+        display: flex;
+        width: 100%;
+        font-size: 18px;
+    }
+
+    .container .card button {
+        width: 100%;
+        font-size: 12px;
+        margin: 5px;
+    }
+
+    .container .card button i {
+        display: none;
+
+    }
+
 }
-
-
-    
-
