@@ -21,7 +21,7 @@
                         <Link className="nav-link text-white" to="/el_buen_lector/Pages/Dasboard/Dasboard">
                             <div className="logo">
                                 <img src={logo} />
-                                <h2 className="fs-3 fs-md-1 fs-lg-1">ElBuen<span className="text-primary">Lector</span></h2>
+                                <h2>ElBuen<span className="primary">Lector</span></h2>
                             </div>
                         </Link>
                         <div className="close" id="close">
