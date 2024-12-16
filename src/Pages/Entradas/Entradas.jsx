@@ -17,33 +17,6 @@ const Entradas = () => {
     fetchApi();
   }, []);
 
-  // Exportar a PDF
-  const exportToPDF = () => {
-    const { jsPDF } = window.jspdf;
-    const doc = new jsPDF();
-
-    // Título del PDF
-    doc.setFontSize(18);
-    doc.setTextColor(255, 0, 0);
-    doc.text("LISTA DE ENTRADAS DE LIBROS", 14, 16);
-
-    const tableColumn = ["Título", "Cantidad", "Fecha Ingreso", "Motivo"];
-    const tableRows = entradaslibros.map(entradas => [
-      entradas.libro.titulo,
-      entradas.cantidad,
-      entradas.fechaIngreso,
-      entradas.motivo,
-    ]);
-
-    doc.autoTable({
-      head: [tableColumn],
-      body: tableRows,
-      startY: 20,
-      theme: 'grid',
-    });
-
-    doc.save('entradas.pdf');
-  };
 
   // DataTable 
   useEffect(() => {
@@ -73,9 +46,6 @@ const Entradas = () => {
         <div className="card-header bg-primary border-top p-3">
           <div className="d-flex justify-content-between align-items-center">
             <h2 className="m-0 text-white">Entradas de Libros</h2>
-            <button className="btn btn-light me-2" onClick={exportToPDF}>
-              <i className="bi bi-file-earmark-pdf me-2 text-danger h5"></i>Exportar a PDF
-            </button>
           </div>
         </div>
       </div>

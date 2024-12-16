@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import { Notyf } from 'notyf';
 import Select from 'react-select';
 
@@ -6,11 +6,12 @@ const Stock = () => {
 
   // APIS BUEN LECTOR
   const urlGet = 'http://localhost:8080/apiv1/stocklibros/listar';
-  const urlPostEntrada = 'http://localhost:8080/apiv1/stocklibros/registrar';  
+  const urlPostEntrada = 'http://localhost:8080/apiv1/stocklibros/registrar';
   const urlPostSalida = 'http://localhost:8080/apiv1/stocklibros/salidareg';
   const urlLibros = 'http://localhost:8080/apiv1/libros/listar';
 
   // ESTADOS
+  const tablaStock = useRef(null);
   const [stocklibros, setStockLibros] = useState([]);
   const [libros, setLibros] = useState([]);  // Estado para almacenar los libros
   const [nuevoStockEntrada, setNuevoStockEntrada] = useState({ idLibro: '', cantidad: '', motivo: '' });
@@ -182,43 +183,38 @@ const Stock = () => {
     }
   };
 
-  // Exportar a PDF
-  const exportToPDF = () => {
-    const { jsPDF } = window.jspdf;
-    const doc = new jsPDF();
 
-    // Título del PDF
-    doc.setFontSize(18);
-    doc.setTextColor(255, 0, 0);
-    doc.text("LISTA DE STOCK DE LIBROS", 14, 16);
+  // DataTable 
+  useEffect(() => {
+    if (stocklibros.length > 0 && !$.fn.dataTable.isDataTable(tablaStock.current)) {
+      $(tablaStock.current).DataTable({
+        paging: true,
+        lengthChange: false,
+        searching: true,
+        ordering: false,
+        info: false,
+        autoWidth: true,
+        responsive: true,
+        language: {
+          search: "Buscar Stock:",
+          paginate: {
+            previous: "Anterior",
+            next: "Siguiente",
+          },
+        },
+      });
+    }
+  }, [libros]);
 
-    const tableColumn = ["Libro", "Stock"];
-    const tableRows = stocklibros.map(skt => [
-      skt.tituloLibro,
-      skt.cantidad,
-    ]);
-
-    doc.autoTable({
-      head: [tableColumn],
-      body: tableRows,
-      startY: 20,
-      theme: 'grid',
-    });
-
-    doc.save('stock.pdf');
-  };
 
   return (
     <div className="container mt-4">
       {/* Card Header */}
-      <div className="card border-top-0">
+      <div className="card border-top-0 mb-2">
         <div className="card-header bg-primary border-top p-3">
           <div className="d-flex justify-content-between align-items-center">
             <h2 className="m-0 text-white">Stock de Libros</h2>
             <div>
-              <button className="btn btn-light ms-2" onClick={exportToPDF}>
-                <i className="bi bi-file-earmark-pdf me-2 text-danger h6"></i>Exportar a PDF
-              </button>
               <button className="btn btn-light ms-2" onClick={() => setModalShowEntrada(true)}>
                 Agregar Entrada
               </button>
@@ -267,7 +263,7 @@ const Stock = () => {
                       }
                     }}
                     required
-                    disabled={!nuevoStockEntrada.idLibro} 
+                    disabled={!nuevoStockEntrada.idLibro}
                   />
                 </div>
 
@@ -389,7 +385,7 @@ const Stock = () => {
 
       {/* Tabla de Stock */}
       <div className="table-container">
-        <table className="table table-striped">
+        <table  ref={tablaStock} className="table table-striped">
           <thead>
             <tr>
               <th>Libro</th>
@@ -399,7 +395,7 @@ const Stock = () => {
           <tbody>
             {stocklibros.map((skt) => (
               <tr key={skt.idStock}>
-                <td>{skt.libro.titulo}</td>
+                <td className='col-8'>{skt.libro.titulo}</td>
                 <td>{skt.cantidadTotal}</td>
               </tr>
             ))}

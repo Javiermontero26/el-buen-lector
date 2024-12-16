@@ -1,6 +1,8 @@
 import React from 'react';
 import './App.css';
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
+
+// COMPONENTES
 import Login from './Pages/Login/LoginForm/login.jsx';
 import Dasboard from './Pages/Dasboard/Dasboard.jsx';
 import Libros from './Pages/Libros/Libros.jsx';
@@ -12,6 +14,7 @@ import Salidas from './Pages/Salidas/Salidas.jsx';
 import Stock from './Pages/Stock/Stock.jsx';
 import Configuracion from './Pages/Configuracion/Configuracion.jsx';
 import Usuarios from './Pages/Usuarios/Usuarios.jsx';
+
 const App = () => {
     return (
         <Router>
@@ -23,7 +26,7 @@ const App = () => {
                 <Route
                     path="/el_buen_lector/Pages/Dasboard/Dasboard"
                     element={
-                        <ProtectedRoute>
+                        <ProtectedRoute> {/*Permite Saber si el Usuario esta Autenticado osea sesion activa*/}
                             <>
                                 <div className="container-fluid">
                                     <NavUser />

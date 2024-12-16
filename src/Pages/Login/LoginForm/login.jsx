@@ -8,7 +8,7 @@ import logologin from '../LoginForm/logoblanco.png';
 
 const Login = () => {
 
-    // Propiedades de las Alertas
+  // Propiedades de las Alertas
   const notyf = new Notyf({
     duration: 3000,
     position: { x: 'center', y: 'top' },
@@ -72,7 +72,7 @@ const Login = () => {
 
       // Redirigir según el rol
       setTimeout(() => {
-        navigate(role === 'admin' ? '/el_buen_lector/Pages/Dasboard/Dasboard' : '/el_buen_lector/Pages/Libros/Libros');
+        navigate('/el_buen_lector/Pages/Dasboard/Dasboard');
       }, 1000);
     } else {
       notyf.error('Usuario y/o contraseña incorrectos.');

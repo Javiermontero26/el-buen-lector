@@ -111,31 +111,6 @@ const Libros = () => {
     setModalAutorShow(false);
   };
 
-  // Exportar a PDF
-  const exportToPDF = () => {
-    const { jsPDF } = window.jspdf;
-    const doc = new jsPDF();
-
-    // Título del PDFF
-    doc.setFontSize(18);
-    doc.text("LISTA DE LIBROS", 14, 16);
-
-    const tableColumn = ["Título", "Fecha Publicación", "Autor"];
-    const tableRows = libros.map(libro => [
-      libro.titulo,
-      libro.fechaPublicacion,
-      libro.autor.nombre,
-    ]);
-
-    doc.autoTable({
-      head: [tableColumn],
-      body: tableRows,
-      startY: 20,
-      theme: 'grid',
-    });
-
-    doc.save('libros.pdf');
-  };
 
   useEffect(() => {
     fetchLibros();
@@ -187,9 +162,6 @@ const Libros = () => {
           <div className="d-flex align-items-center">
             <h2 className="m-0 text-white flex-grow-1">Lista de Libros</h2>
             <div className="d-flex">
-              <button className="btn btn-light me-2" onClick={exportToPDF}>
-                <i className="bi bi-file-earmark-pdf me-2 text-danger h5"></i>Exportar a PDF
-              </button>
               <button className="btn btn-light" onClick={() => setModalShow(true)}>
                 Agregar
               </button>
