@@ -1,15 +1,16 @@
 import React, { useEffect, useState } from 'react';
 import { Notyf } from 'notyf';
-import Select from 'react-select';  // Importar el componente Select
+import Select from 'react-select';
 
 const Stock = () => {
-  // URLs de la API
-  const urlGet = 'http://localhost:8080/apiv1/stocklibros/listar';
-  const urlPostEntrada = 'http://localhost:8080/apiv1/stocklibros/registrar';  // Para entradas
-  const urlPostSalida = 'http://localhost:8080/apiv1/stocklibros/salidareg';  // Para salidas
-  const urlLibros = 'http://localhost:8080/apiv1/libros/listar';  // URL para obtener los libros
 
-  // Estados
+  // APIS BUEN LECTOR
+  const urlGet = 'http://localhost:8080/apiv1/stocklibros/listar';
+  const urlPostEntrada = 'http://localhost:8080/apiv1/stocklibros/registrar';  
+  const urlPostSalida = 'http://localhost:8080/apiv1/stocklibros/salidareg';
+  const urlLibros = 'http://localhost:8080/apiv1/libros/listar';
+
+  // ESTADOS
   const [stocklibros, setStockLibros] = useState([]);
   const [libros, setLibros] = useState([]);  // Estado para almacenar los libros
   const [nuevoStockEntrada, setNuevoStockEntrada] = useState({ idLibro: '', cantidad: '', motivo: '' });
@@ -17,10 +18,11 @@ const Stock = () => {
   const [modalShowEntrada, setModalShowEntrada] = useState(false);
   const [modalShowSalida, setModalShowSalida] = useState(false);
 
-  // Crear una instancia de Notyf para notificaciones
+  // INSTANCIA PARA USAR NOTYF Y AGREGAR PROPIEDADES A LA ALERTA
   const notyf = new Notyf();
 
-  // Obtener Stock desde la API
+
+  // OBTENER STOCK CON API GET
   const fetchStock = async () => {
     try {
       const response = await fetch(urlGet);
@@ -32,7 +34,7 @@ const Stock = () => {
     }
   };
 
-  // Obtener los libros desde la API
+  // OBTENER LIBROS CON API GET
   const fetchLibros = async () => {
     try {
       const response = await fetch(urlLibros);
@@ -44,7 +46,7 @@ const Stock = () => {
     }
   };
 
-  // Agregar entrada de stock
+  // AGREGAR ENTRADA A STOCK (AUMENTA LA CANTIDAD)
   const agregarEntrada = async () => {
     if (!nuevoStockEntrada.idLibro || !nuevoStockEntrada.cantidad || !nuevoStockEntrada.motivo) {
       notyf.error('Todos los campos son requeridos');
@@ -84,7 +86,7 @@ const Stock = () => {
     }
   };
 
-  // Agregar salida de stock
+  // AGREGAR SALIDA A STOCK (DISMINUYE LA CANTIDAD)
   const agregarSalida = async () => {
     if (!nuevoStockSalida.idLibro || !nuevoStockSalida.cantidad || !nuevoStockSalida.motivo) {
       notyf.error('Todos los campos son requeridos');
@@ -120,11 +122,11 @@ const Stock = () => {
       }
     } catch (error) {
       console.error('Error en la solicitud:', error);
-      notyf.error('Hubo un error al conectar con el servidor.');
+      notyf.error('La cantidad ingresada es mayor al stock Disponible');
     }
   };
 
-  // Función para cerrar los modales
+  // CON ESTO CERRAMOS LOS MODALES Y SE PIERDEN LOS DATOS ANTES ESCRITOS O SELECCIONADOS
   const handleCloseModalEntrada = () => {
     setNuevoStockEntrada({ idLibro: '', cantidad: '', motivo: '' });
     setModalShowEntrada(false);
@@ -140,12 +142,14 @@ const Stock = () => {
     fetchLibros();
   }, []);
 
-  // Opciones para React-Select
+  // OPCIONES DE REACT-SELECT
   const libroOptions = libros.map((libro) => ({
     value: libro.idLibro,
     label: libro.titulo,
   }));
 
+
+  //SELECT ENTRADAS
   const handleSelectChangeEntrada = (selectedOption) => {
     setNuevoStockEntrada({
       ...nuevoStockEntrada,
@@ -153,13 +157,30 @@ const Stock = () => {
     });
   };
 
+  //SELECT SALIDAS
   const handleSelectChangeSalida = (selectedOption) => {
+    const selectedLibro = stocklibros.find((stock) => stock.libro.idLibro === selectedOption.value);
     setNuevoStockSalida({
       ...nuevoStockSalida,
-      idLibro: selectedOption ? selectedOption.value : ''
+      idLibro: selectedOption.value,
+      stockDisponible: selectedLibro ? selectedLibro.cantidadTotal : 0,
     });
   };
 
+
+  // LOGICA PARA QUE SE CAMBIE SOLA LA CANTIDAD SI ES MAYOR Al STOCK DISPONIBLE
+  const handleCantidadChange = (e) => {
+    const value = e.target.value;
+
+    // VALIDACION PARA NUMEROS ENTEROS Y QUE NO EXEDA EL SOCTK DISPONIBLE
+    if (/^[0-9]*$/.test(value)) {
+      // SI EL VALOR INGRESADOR ES MAYOR QUE EL STOCK, SE AJUSTA AUTOMATICAMENTE AL STOCK DISPONIBLEE
+      const cantidad = Math.min(parseInt(value) || 0, nuevoStockSalida.stockDisponible);
+
+      // ACTUALIZA EL ESTADO A LA CANTIDAD AJUSTADA
+      setNuevoStockSalida({ ...nuevoStockSalida, cantidad: cantidad });
+    }
+  };
 
   // Exportar a PDF
   const exportToPDF = () => {
@@ -233,15 +254,23 @@ const Stock = () => {
                 <div className="mb-3">
                   <label htmlFor="cantidad" className="form-label">Cantidad</label>
                   <input
-                    type="number"
+                    type="text"
                     className="form-control"
                     id="cantidad"
                     name="cantidad"
                     value={nuevoStockEntrada.cantidad}
-                    onChange={(e) => setNuevoStockEntrada({ ...nuevoStockEntrada, cantidad: e.target.value })}
+                    onChange={(e) => {
+                      const value = e.target.value;
+                      // Solo numeros enteros
+                      if (/^[0-9]*$/.test(value)) {
+                        setNuevoStockEntrada({ ...nuevoStockEntrada, cantidad: value });
+                      }
+                    }}
                     required
+                    disabled={!nuevoStockEntrada.idLibro} 
                   />
                 </div>
+
                 <div className="mb-3">
                   <label htmlFor="motivo" className="form-label">Motivo</label>
                   <div id="motivo" name="motivo" className="d-flex">
@@ -304,18 +333,21 @@ const Stock = () => {
                     isClearable
                   />
                 </div>
+
                 <div className="mb-3">
                   <label htmlFor="cantidad" className="form-label">Cantidad</label>
                   <input
-                    type="number"
+                    type="text"
                     className="form-control"
                     id="cantidad"
                     name="cantidad"
                     value={nuevoStockSalida.cantidad}
-                    onChange={(e) => setNuevoStockSalida({ ...nuevoStockSalida, cantidad: e.target.value })}
+                    onChange={handleCantidadChange}
+                    disabled={!nuevoStockSalida.idLibro}  // Deshabilitar el input, debe esperar el id del libro para seleccionarserrr
                     required
                   />
                 </div>
+
                 <div className="mb-3">
                   <label htmlFor="motivo" className="form-label">Motivo</label>
                   <div id="motivo" name="motivo" className="d-flex">
@@ -366,9 +398,9 @@ const Stock = () => {
           </thead>
           <tbody>
             {stocklibros.map((skt) => (
-              <tr key={skt.tituloLibro}>
-                <td>{skt.tituloLibro}</td>
-                <td>{skt.cantidad}</td>
+              <tr key={skt.idStock}>
+                <td>{skt.libro.titulo}</td>
+                <td>{skt.cantidadTotal}</td>
               </tr>
             ))}
           </tbody>
