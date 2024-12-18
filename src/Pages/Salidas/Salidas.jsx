@@ -3,13 +3,15 @@ import React, { useEffect, useState, useRef } from 'react';
 const Salidas = () => {
   const url = 'http://localhost:8080/apiv1/historial/salida';
   const [salidaslibros, setSalidasLibros] = useState([]);
-  const tablaSalidas = useRef(null);
+  const [salidasFiltradas, setSalidasFiltradas] = useState([]);
+  const [searchQuery, setSearchQuery] = useState('');
 
   // Función para obtener los datos de la API
   const fetchApi = async () => {
     const response = await fetch(url);
     const responseJSON = await response.json();
     setSalidasLibros(responseJSON);
+    setSalidasFiltradas(responseJSON); // Inicializamos el filtro con todos los datos
   };
 
   // Llamada a la API al montar el componente
@@ -17,28 +19,58 @@ const Salidas = () => {
     fetchApi();
   }, []);
 
+  //-------------- BUSQUEDA ------------//
 
-  // DataTable 
-  useEffect(() => {
-    if (salidaslibros.length > 0 && !$.fn.dataTable.isDataTable(tablaSalidas.current)) {
-      $(tablaSalidas.current).DataTable({
-        paging: true,
-        lengthChange: false,
-        searching: true,
-        ordering: false,
-        info: false,
-        autoWidth: true,
-        responsive: true,
-        language: {
-          search: "Buscar Salidas:",
-          paginate: {
-            previous: "Anterior",
-            next: "Siguiente",
-          },
-        },
-      });
-    }
-  }, [salidaslibros]);
+  // Función para manejar la búsqueda
+  const handleSearch = (event) => {
+    const query = event.target.value.toLowerCase();
+    setSearchQuery(query);
+
+    const filtered = salidaslibros.filter((salidas) =>
+      salidas.libro.titulo.toLowerCase().includes(query) ||
+      salidas.fechaIngreso.toLowerCase().includes(query) ||
+      salidas.cantidad.toString().includes(query) ||
+      salidas.motivo.toLowerCase().includes(query)
+    );
+
+    setSalidasFiltradas(filtered);
+  };
+
+  // Función para limpiar el campo de búsqueda
+  const clearSearch = () => {
+    setSearchQuery('');
+    setSalidasFiltradas(salidaslibros);
+  };
+
+  //-------------- FIN BUSQUEDA ------------//
+
+  // Exportar a PDF
+  const exportToPDF = () => {
+    const { jsPDF } = window.jspdf;
+    const doc = new jsPDF();
+
+    // Título del PDF
+    doc.setFontSize(18);
+    doc.setTextColor(255, 0, 0);
+    doc.text("LISTA DE SALIDAS DE LIBROS", 14, 16);
+
+    const tableColumn = ["Título", "Cantidad", "Fecha Ingreso", "Motivo"];
+    const tableRows = salidasFiltradas.map(salidas => [
+      salidas.libro.titulo,
+      salidas.cantidad,
+      salidas.fechaIngreso,
+      salidas.motivo,
+    ]);
+
+    doc.autoTable({
+      head: [tableColumn],
+      body: tableRows,
+      startY: 20,
+      theme: 'grid',
+    });
+
+    doc.output('dataurlnewwindow');
+  };
 
   return (
     <div className="container mt-4">
@@ -46,13 +78,39 @@ const Salidas = () => {
         <div className="card-header bg-primary border-top p-3">
           <div className="d-flex justify-content-between align-items-center">
             <h2 className="m-0 text-white">Salidas de Libros</h2>
+            <button className="btn btn-light me-2" onClick={exportToPDF}>
+              <i className="bi bi-file-earmark-pdf me-2 text-danger h5"></i>Exportar a PDF
+            </button>
           </div>
         </div>
       </div>
 
-      {/* Lista de Entradas */}
+      {/* Barra de búsqueda */}
+      <div className="mb-3 d-flex align-items-center col-12 col-md-12 col-lg-3 ms-auto">
+        <label htmlFor="Busquedas" className="me-2">Filtrar:</label>
+        <div className="position-relative">
+          <input
+            type="text"
+            className="form-control"
+            value={searchQuery}
+            onChange={handleSearch}
+          />
+
+          {/* Mostrar la X solo si hay texto en el campo de búsqueda */}
+          {searchQuery && (
+            <span
+              className="position-absolute top-50 end-0 translate-middle-y pe-2"
+              onClick={clearSearch}
+              style={{ cursor: 'pointer' }}
+            >
+              <i className="bi bi-x" style={{ fontSize: '1.5rem', color: 'black' }}></i>
+            </span>
+          )}
+        </div>
+      </div>
+
       <div className="table-container">
-        <table ref={tablaSalidas} className="table table-striped" id="tablaSalidas">
+        <table className="table table-striped" id="tablaSalidas">
           <thead>
             <tr>
               <th>Libro</th>
@@ -63,7 +121,7 @@ const Salidas = () => {
             </tr>
           </thead>
           <tbody>
-            {salidaslibros.map((salidas) => (
+            {salidasFiltradas.map((salidas) => (
               <tr key={salidas.idSalida}>
                 <td className='col-4'>{salidas.libro.titulo}</td>
                 <td className='col-1'>{salidas.cantidad}</td>

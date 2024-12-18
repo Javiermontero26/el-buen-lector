@@ -1,11 +1,10 @@
-import React, { useEffect, useState, useRef } from 'react';
+import React, { useEffect, useState} from 'react';
 
 const Entradas = () => {
   const url = 'http://localhost:8080/apiv1/historial/ingreso';
   const [entradaslibros, setEntradasLibros] = useState([]);
   const [entradasFiltradas, setEntradasFiltradas] = useState([]);
   const [searchQuery, setSearchQuery] = useState('');
-  const tablaEntradas = useRef(null);
 
   // Función para obtener los datos de la API
   const fetchApi = async () => {
@@ -19,6 +18,9 @@ const Entradas = () => {
   useEffect(() => {
     fetchApi();
   }, []);
+
+
+  //-------------- BUSQUEDA ------------//
 
   // Función para manejar la búsqueda
   const handleSearch = (event) => {
@@ -36,12 +38,13 @@ const Entradas = () => {
     
   };
 
-
   // Función para limpiar el campo de búsqueda
   const clearSearch = () => {
     setSearchQuery('');
     setEntradasFiltradas(entradaslibros); 
   };
+
+  //-------------- FIN BUSQUEDA ------------//
 
   // Exportar a PDF
   const exportToPDF = () => {
@@ -110,7 +113,7 @@ const Entradas = () => {
 
       {/* Lista de Entradas */}
       <div className="table-container">
-        <table ref={tablaEntradas} className="table table-striped" id="tablaEntradas">
+        <table className="table table-striped" id="tablaEntradas">
           <thead>
             <tr>
               <th>Libro</th>
