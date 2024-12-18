@@ -1,12 +1,12 @@
 import React from 'react';
 import '../NavUser/NavUser.css';
 import logoperfil from '../NavUser/profile-1.jpg';
-import { useLocation } from 'react-router-dom'; 
+import { useLocation } from 'react-router-dom';
 
 const NavUser = () => {
     const userName = localStorage.getItem('userName');
     const role = localStorage.getItem('role');
-    const location = useLocation(); 
+    const location = useLocation();
 
     // Función para obtener solo el último segmento de la ruta
     const getLastSegment = (pathname) => {
@@ -24,7 +24,11 @@ const NavUser = () => {
                 <div className="profile">
                     <div className="info">
                         <p className="text-white">Hola, <b className="text-white">{userName}</b></p>
-                        <p className="text-white"><small>{role === 'admin' ? 'Administrador' : 'Almacénero'}</small></p>
+                        <p className="text-white">
+                            <small>
+                            {role === 'Admin' && 'Administrador'}{role === 'Almacenero' && 'Almacénero'}
+                            </small>
+                        </p>
                     </div>
                     <div className="profile-photo">
                         <img src={logoperfil} alt="Profile" />

@@ -7,7 +7,7 @@ import { messages } from '../LoginForm/logindatadays';
 import logologin from '../LoginForm/logoblanco.png';
 
 const Login = () => {
-
+  
   // Propiedades de las Alertas para Iniciar Sesion
   const notyf = new Notyf({
     duration: 3000,
@@ -20,27 +20,17 @@ const Login = () => {
     maxNotifications: 1,
   });
 
-  // Credenciales válidas para administrador y almacenerooo
-  const validCredentials = {
-    username: 'admin',
-    password: '123',
-    role: 'admin',
-  };
-
-  const validCredentialsAlmacen = {
-    username: 'almacenero',
-    password: '12345',
-    role: 'almacen',
-  };
-
-  // Estado del componentes
+  // Estado del componente
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [messageOfTheDay, setMessageOfTheDay] = useState('');
+  const [loading, setLoading] = useState(false);  // Para manejar el estado de carga
+  const [usuarios, setUsuarios] = useState([]);  // Estado para los usuarios
 
   // Navegación
   const navigate = useNavigate();
 
+  // Obtener los usuarios desde la API al cargar el componente
   useEffect(() => {
     const isAuthenticated = localStorage.getItem('isAuthenticated');
     if (isAuthenticated) {
@@ -52,31 +42,53 @@ const Login = () => {
     const randomMessageIndex = Math.floor(Math.random() * messages[dayOfWeek].length);
     const message = messages[dayOfWeek][randomMessageIndex];
     setMessageOfTheDay(message);
+
+    // Obtener usuarios desde la API
+    const fetchUsuarios = async () => {
+      try {
+        const response = await fetch('http://localhost:8080/apiv1/usuarios/listar');
+        const data = await response.json();
+        setUsuarios(data);
+      } catch (error) {
+        console.error('Error al obtener usuarios:', error);
+        notyf.error('Error al obtener los usuarios.');
+      }
+    };
+
+    fetchUsuarios();
   }, [navigate]);
 
   // Manejo del formulario de inicio de sesión
-  const handleSubmit = (event) => {
+  const handleSubmit = async (event) => {
     event.preventDefault();
     notyf.dismissAll(); // Cierra todas las notificaciones activas
 
-    if (
-      (username === validCredentials.username && password === validCredentials.password) ||
-      (username === validCredentialsAlmacen.username && password === validCredentialsAlmacen.password)
-    ) {
-      const role = username === validCredentials.username ? 'admin' : 'almacen';
+    // Mostrar cargando
+    setLoading(true);
+
+    // Buscar el usuario en la lista de usuarios
+    const usuario = usuarios.find(
+      (user) => user.usuario === username && user.password === password
+    );
+
+    if (usuario) {
+      // Guardamos la información del usuario en el localStorage
       localStorage.setItem('isAuthenticated', 'true');
-      localStorage.setItem('role', role);
-      localStorage.setItem('userName', username);
+      localStorage.setItem('role', usuario.rol.nombre);  // El rol lo obtenemos del usuario
+      localStorage.setItem('userName', usuario.usuario);
 
       notyf.success('¡Has iniciado sesión exitosamente!');
 
-      // Redirigir según el rol
+      // Redirigimos al dashboard según el rol
       setTimeout(() => {
         navigate('/el_buen_lector/Pages/Dasboard/Dasboard');
       }, 1000);
     } else {
+      // Si no se encuentra el usuario o la contraseña no coincide
       notyf.error('Usuario y/o contraseña incorrectos.');
     }
+
+    setLoading(false);  // Termina el estado de carga
   };
 
   return (
@@ -126,8 +138,8 @@ const Login = () => {
             </div>
 
             {/* Botón de envío */}
-            <button type="submit" className="btn btn-dark w-100 mt-3">
-              Comencemos
+            <button type="submit" className="btn btn-dark w-100 mt-3" disabled={loading}>
+              {loading ? 'Cargando...' : 'Comencemos'}
             </button>
 
             {/* Enlace de "Olvidé mi contraseña" */}
@@ -135,7 +147,6 @@ const Login = () => {
               <a href="#" className="text-white fw-bold">
                 Olvidé mi contraseña
               </a>
-              {/* <Link to="#" className="text-white fw-bold">Olvidé mi contraseña</Link> */}
             </div>
           </form>
         </div>
