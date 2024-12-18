@@ -24,7 +24,7 @@ const NavUser = () => {
                 <div className="profile">
                     <div className="info">
                         <p className="text-white">Hola, <b className="text-white">{userName}</b></p>
-                        <p className="text-white"><small>{role === 'admin' ? 'Administrador' : 'Almacéro'}</small></p>
+                        <p className="text-white"><small>{role === 'admin' ? 'Administrador' : 'Almacénero'}</small></p>
                     </div>
                     <div className="profile-photo">
                         <img src={logoperfil} alt="Profile" />

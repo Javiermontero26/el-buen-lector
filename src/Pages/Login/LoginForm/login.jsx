@@ -8,7 +8,7 @@ import logologin from '../LoginForm/logoblanco.png';
 
 const Login = () => {
 
-  // Propiedades de las Alertas
+  // Propiedades de las Alertas para Iniciar Sesion
   const notyf = new Notyf({
     duration: 3000,
     position: { x: 'center', y: 'top' },
