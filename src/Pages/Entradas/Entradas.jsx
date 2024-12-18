@@ -12,7 +12,7 @@ const Entradas = () => {
     const response = await fetch(url);
     const responseJSON = await response.json();
     setEntradasLibros(responseJSON);
-    setEntradasFiltradas(responseJSON); // Inicializamos el filtro con todos los datos
+    setEntradasFiltradas(responseJSON); 
   };
 
   // Llamada a la API al montar el componente
@@ -26,17 +26,21 @@ const Entradas = () => {
     setSearchQuery(query);
 
     const filtered = entradaslibros.filter((entrada) =>
-      entrada.libro.titulo.toLowerCase().includes(query) ||
-      entrada.motivo.toLowerCase().includes(query)
+      entrada.libro.titulo.toLowerCase().includes(query) ||  
+      entrada.fechaIngreso.toLowerCase().includes(query) ||  
+      entrada.cantidad.toString().includes(query) ||  // Convierte cantidad a string para usar includes()
+      entrada.motivo.toLowerCase().includes(query)  
     );
 
     setEntradasFiltradas(filtered);
+    
   };
+
 
   // Función para limpiar el campo de búsqueda
   const clearSearch = () => {
     setSearchQuery('');
-    setEntradasFiltradas(entradaslibros); // Muestra todos los datos al limpiar el filtro
+    setEntradasFiltradas(entradaslibros); 
   };
 
   // Exportar a PDF
@@ -90,6 +94,7 @@ const Entradas = () => {
             value={searchQuery}
             onChange={handleSearch}
           />
+
           {/* Mostrar la X solo si hay texto en el campo de búsqueda */}
           {searchQuery && (
             <span
