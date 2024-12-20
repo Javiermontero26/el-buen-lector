@@ -24,7 +24,7 @@ const Login = () => {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [messageOfTheDay, setMessageOfTheDay] = useState('');
-  const [loading, setLoading] = useState(false);  // Para manejar el estado de carga
+  const [loading, setLoading] = useState(false);  // Para manejar el estado de cargaaaa
   const [usuarios, setUsuarios] = useState([]);  // Estado para los usuarios
 
   // Navegación
