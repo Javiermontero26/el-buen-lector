@@ -1,4 +1,4 @@
-import React, { useEffect, useState} from 'react';
+import React, { useEffect, useState } from 'react';
 
 const Entradas = () => {
   const url = 'http://localhost:8080/apiv1/historial/ingreso';
@@ -8,17 +8,34 @@ const Entradas = () => {
 
   // Función para obtener los datos de la API
   const fetchApi = async () => {
-    const response = await fetch(url);
-    const responseJSON = await response.json();
-    setEntradasLibros(responseJSON);
-    setEntradasFiltradas(responseJSON); 
+    // Obtener el token de acceso del localStorage
+    const token = localStorage.getItem('accessToken'); 
+    
+    try {
+      const response = await fetch(url, {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`,  
+        },
+      });
+
+      if (response.ok) {
+        const responseJSON = await response.json();
+        setEntradasLibros(responseJSON);
+        setEntradasFiltradas(responseJSON);
+      } else {
+        console.error('Error al obtener datos:', response.statusText);
+      }
+    } catch (error) {
+      console.error('Error en la solicitud de API:', error);
+    }
   };
 
   // Llamada a la API al montar el componente
   useEffect(() => {
     fetchApi();
   }, []);
-
 
   //-------------- BUSQUEDA ------------//
 
@@ -28,14 +45,13 @@ const Entradas = () => {
     setSearchQuery(query);
 
     const filtered = entradaslibros.filter((entrada) =>
-      entrada.libro.titulo.toLowerCase().includes(query) ||  
-      entrada.fechaIngreso.toLowerCase().includes(query) ||  
-      entrada.cantidad.toString().includes(query) ||  // Convierte cantidad a string para usar includes()
-      entrada.motivo.toLowerCase().includes(query)  
+      entrada.libro.titulo.toLowerCase().includes(query) ||
+      entrada.fechaIngreso.toLowerCase().includes(query) ||
+      entrada.cantidad.toString().includes(query) ||
+      entrada.motivo.toLowerCase().includes(query)
     );
 
     setEntradasFiltradas(filtered);
-    
   };
 
   // Función para limpiar el campo de búsqueda
@@ -57,11 +73,11 @@ const Entradas = () => {
     doc.text("LISTA DE ENTRADAS DE LIBROS", 14, 16);
 
     const tableColumn = ["Título", "Cantidad", "Fecha Ingreso", "Motivo"];
-    const tableRows = entradasFiltradas.map(entradas => [
-      entradas.libro.titulo,
-      entradas.cantidad,
-      entradas.fechaIngreso,
-      entradas.motivo,
+    const tableRows = entradasFiltradas.map(entrada => [
+      entrada.libro.titulo,
+      entrada.cantidad,
+      entrada.fechaIngreso,
+      entrada.motivo,
     ]);
 
     doc.autoTable({
@@ -98,7 +114,7 @@ const Entradas = () => {
             onChange={handleSearch}
           />
 
-          {/* Mostrar la X solo si hay texto en el campo de búsqueda */}
+          {/* Mostrar la X */}
           {searchQuery && (
             <span
               className="position-absolute top-50 end-0 translate-middle-y pe-2"
@@ -124,12 +140,12 @@ const Entradas = () => {
             </tr>
           </thead>
           <tbody>
-            {entradasFiltradas.map((entradas) => (
-              <tr key={entradas.idIngreso}>
-                <td className="col-4">{entradas.libro.titulo}</td>
-                <td className="col-1">{entradas.cantidad}</td>
-                <td className="col-3">{entradas.fechaIngreso}</td>
-                <td className="col-3">{entradas.motivo}</td>
+            {entradasFiltradas.map((entrada) => (
+              <tr key={entrada.idIngreso}>
+                <td className="col-4">{entrada.libro.titulo}</td>
+                <td className="col-1">{entrada.cantidad}</td>
+                <td className="col-3">{entrada.fechaIngreso}</td>
+                <td className="col-3">{entrada.motivo}</td>
                 <td className="col-1">
                   <span
                     className="edit"

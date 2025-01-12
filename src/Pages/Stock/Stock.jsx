@@ -13,32 +13,52 @@ const Stock = () => {
   // ESTADOS
   const tablaStock = useRef(null);
   const [stocklibros, setStockLibros] = useState([]);
-  const [libros, setLibros] = useState([]);  // Estado para almacenar los libros
+  const [stockFiltrados, setStockFiltrados] = useState([]);
+  const [searchQuery, setSearchQuery] = useState('');
+  const [libros, setLibros] = useState([]);
   const [nuevoStockEntrada, setNuevoStockEntrada] = useState({ idLibro: '', cantidad: '', motivo: '' });
-  const [nuevoStockSalida, setNuevoStockSalida] = useState({ idLibro: '', cantidad: '', motivo: '' });
+  const [nuevoStockSalida, setNuevoStockSalida] = useState({ idLibro: '', cantidad: '', motivo: '', stockDisponible: 0 });
   const [modalShowEntrada, setModalShowEntrada] = useState(false);
   const [modalShowSalida, setModalShowSalida] = useState(false);
+  const token = localStorage.getItem('accessToken');
 
   // INSTANCIA PARA USAR NOTYF Y AGREGAR PROPIEDADES A LA ALERTA
   const notyf = new Notyf();
 
-
   // OBTENER STOCK CON API GET
   const fetchStock = async () => {
+
     try {
-      const response = await fetch(urlGet);
-      const responseJSON = await response.json();
-      setStockLibros(responseJSON);
+      // Realizar la solicitud con el token en los encabezados
+      const response = await fetch(urlGet, {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`,  // Agregar el token al encabezado Authorization
+        },
+      });
+
+      if (response.ok) {
+        const responseJSON = await response.json();
+        setStockLibros(responseJSON);
+        setStockFiltrados(responseJSON); // Inicializamos el filtro con todos los datos
+      } else {
+        console.error('Error al obtener datos:', response.statusText);
+      }
     } catch (error) {
-      console.error('Error al obtener stock:', error);
-      notyf.error('Error al cargar el stock');
+      console.error('Error en la solicitud de API:', error);
     }
   };
 
   // OBTENER LIBROS CON API GET
   const fetchLibros = async () => {
+    const token = localStorage.getItem('accessToken');
     try {
-      const response = await fetch(urlLibros);
+      const response = await fetch(urlLibros, {
+        headers: {
+          'Authorization': `Bearer ${token}`,
+        },
+      });
       const responseJSON = await response.json();
       setLibros(responseJSON);
     } catch (error) {
@@ -64,6 +84,7 @@ const Stock = () => {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`,  // Enviando el token
         },
         body: JSON.stringify({
           idLibro: parseInt(nuevoStockEntrada.idLibro),
@@ -104,6 +125,7 @@ const Stock = () => {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`,  // Enviando el token
         },
         body: JSON.stringify({
           idLibro: parseInt(nuevoStockSalida.idLibro),
@@ -114,7 +136,7 @@ const Stock = () => {
 
       if (response.ok) {
         fetchStock();
-        setNuevoStockSalida({ idLibro: '', cantidad: '', motivo: '' });
+        setNuevoStockSalida({ idLibro: '', cantidad: '', motivo: '', stockDisponible: 0 });
         setModalShowSalida(false);
         notyf.success('Salida de stock agregada correctamente');
       } else {
@@ -123,7 +145,7 @@ const Stock = () => {
       }
     } catch (error) {
       console.error('Error en la solicitud:', error);
-      notyf.error('La cantidad ingresada es mayor al stock Disponible');
+      notyf.error('Hubo un error al conectar con el servidor.');
     }
   };
 
@@ -134,7 +156,7 @@ const Stock = () => {
   };
 
   const handleCloseModalSalida = () => {
-    setNuevoStockSalida({ idLibro: '', cantidad: '', motivo: '' });
+    setNuevoStockSalida({ idLibro: '', cantidad: '', motivo: '', stockDisponible: 0 });
     setModalShowSalida(false);
   };
 
@@ -149,6 +171,13 @@ const Stock = () => {
     label: libro.titulo,
   }));
 
+  // OPCIONES DE REACT-SELECT PARA SALIDAS (solo libros con stock disponible)
+  const libroOptionsSalida = stocklibros
+    .filter((stock) => stock.cantidadTotal >= 1)  // Solo los libros con stock mayor a 1
+    .map((stock) => ({
+      value: stock.libro.idLibro,
+      label: stock.libro.titulo,
+    }));
 
   //SELECT ENTRADAS
   const handleSelectChangeEntrada = (selectedOption) => {
@@ -168,7 +197,6 @@ const Stock = () => {
     });
   };
 
-
   // LOGICA PARA QUE SE CAMBIE SOLA LA CANTIDAD SI ES MAYOR Al STOCK DISPONIBLE
   const handleCantidadChange = (e) => {
     const value = e.target.value;
@@ -183,29 +211,54 @@ const Stock = () => {
     }
   };
 
+  //-------------- BUSQUEDA ------------//
 
-  // DataTable 
-  useEffect(() => {
-    if (stocklibros.length > 0 && !$.fn.dataTable.isDataTable(tablaStock.current)) {
-      $(tablaStock.current).DataTable({
-        paging: true,
-        lengthChange: false,
-        searching: true,
-        ordering: false,
-        info: false,
-        autoWidth: true,
-        responsive: true,
-        language: {
-          search: "Buscar Stock:",
-          paginate: {
-            previous: "Anterior",
-            next: "Siguiente",
-          },
-        },
-      });
-    }
-  }, [libros]);
+  // Función para manejar la búsqueda
+  const handleSearch = (event) => {
+    const query = event.target.value.toLowerCase();
+    setSearchQuery(query);
 
+    const filtered = stocklibros.filter((skt) =>
+      skt.libro.titulo.toLowerCase().includes(query) ||
+      skt.cantidadTotal.toString().includes(query)
+    );
+
+    setStockFiltrados(filtered);
+  };
+
+  // Función para limpiar el campo de búsqueda
+  const clearSearch = () => {
+    setSearchQuery('');
+    setStockFiltrados(stocklibros);
+  };
+
+  //-------------- FIN BUSQUEDA ------------//
+
+  // Exportar a PDF
+  const exportToPDF = () => {
+    const { jsPDF } = window.jspdf;
+    const doc = new jsPDF();
+
+    // Título del PDF
+    doc.setFontSize(18);
+    doc.setTextColor(255, 0, 0);
+    doc.text("LISTA DE STOCK DE LIBROS", 14, 16);
+
+    const tableColumn = ["Título", "Cantidad"];
+    const tableRows = stockFiltrados.map(skt => [
+      skt.libro.titulo,
+      skt.cantidadTotal,
+    ]);
+
+    doc.autoTable({
+      head: [tableColumn],
+      body: tableRows,
+      startY: 20,
+      theme: 'grid',
+    });
+
+    doc.output('dataurlnewwindow');
+  };
 
   return (
     <div className="container mt-4">
@@ -215,7 +268,11 @@ const Stock = () => {
           <div className="d-flex justify-content-between align-items-center">
             <h2 className="m-0 text-white">Stock de Libros</h2>
             <div>
-              <button className="btn btn-light ms-2" onClick={() => setModalShowEntrada(true)}>
+              <button className="btn btn-light me-2" onClick={exportToPDF}>
+                <i className="bi bi-file-earmark-pdf me-2 text-danger h5"></i>Exportar a PDF
+              </button>
+              <button className="btn btn-light ms-2" onClick={() => setModalShowEntrada(true)}
+                disabled={localStorage.getItem('role') !== 'Almacenero'}>
                 Agregar Entrada
               </button>
               <button className="btn btn-light ms-2" onClick={() => setModalShowSalida(true)}>
@@ -223,6 +280,30 @@ const Stock = () => {
               </button>
             </div>
           </div>
+        </div>
+      </div>
+
+      {/* Barra de búsqueda */}
+      <div className="mb-3 d-flex align-items-center col-12 col-md-12 col-lg-3 ms-auto">
+        <label htmlFor="Busquedas" className="me-2">Filtrar:</label>
+        <div className="position-relative">
+          <input
+            type="text"
+            className="form-control"
+            value={searchQuery}
+            onChange={handleSearch}
+          />
+
+          {/* Mostrar la X solo si hay texto en el campo de búsqueda */}
+          {searchQuery && (
+            <span
+              className="position-absolute top-50 end-0 translate-middle-y pe-2"
+              onClick={clearSearch}
+              style={{ cursor: 'pointer' }}
+            >
+              <i className="bi bi-x" style={{ fontSize: '1.5rem', color: 'black' }}></i>
+            </span>
+          )}
         </div>
       </div>
 
@@ -306,8 +387,6 @@ const Stock = () => {
         </div>
       )}
 
-
-
       {/* Modal para Agregar Salida */}
       {modalShowSalida && (
         <div className="modal show" style={{ display: 'block' }} tabIndex="-1" aria-hidden="true">
@@ -322,9 +401,9 @@ const Stock = () => {
                   <label htmlFor="idLibro" className="form-label">Selecciona un Libro</label>
                   <Select
                     id="idLibro"
-                    options={libroOptions}
+                    options={libroOptionsSalida}
                     onChange={handleSelectChangeSalida}
-                    value={libroOptions.find((option) => option.value === nuevoStockSalida.idLibro)}
+                    value={libroOptionsSalida.find((option) => option.value === nuevoStockSalida.idLibro)}
                     placeholder="Selecciona un libro"
                     isClearable
                   />
@@ -339,9 +418,14 @@ const Stock = () => {
                     name="cantidad"
                     value={nuevoStockSalida.cantidad}
                     onChange={handleCantidadChange}
-                    disabled={!nuevoStockSalida.idLibro}  // Deshabilitar el input, debe esperar el id del libro para seleccionarserrr
                     required
+                    disabled={!nuevoStockSalida.idLibro}
                   />
+                  {nuevoStockSalida.stockDisponible !== undefined && (
+                    <small className="form-text text-muted">
+                      Stock Disponible: {nuevoStockSalida.stockDisponible}
+                    </small>
+                  )}
                 </div>
 
                 <div className="mb-3">
@@ -385,7 +469,7 @@ const Stock = () => {
 
       {/* Tabla de Stock */}
       <div className="table-container">
-        <table  ref={tablaStock} className="table table-striped">
+        <table ref={tablaStock} className="table table-striped">
           <thead>
             <tr>
               <th>Libro</th>
@@ -393,7 +477,7 @@ const Stock = () => {
             </tr>
           </thead>
           <tbody>
-            {stocklibros.map((skt) => (
+            {stockFiltrados.map((skt) => (
               <tr key={skt.idStock}>
                 <td className='col-8'>{skt.libro.titulo}</td>
                 <td>{skt.cantidadTotal}</td>
@@ -402,7 +486,6 @@ const Stock = () => {
           </tbody>
         </table>
       </div>
-
     </div>
   );
 };

@@ -27,15 +27,13 @@ const App = () => {
                     path="/el_buen_lector/Pages/Dasboard/Dasboard"
                     element={
                         <ProtectedRoute> {/*Permite Saber si el Usuario esta Autenticado osea sesion activa*/}
-                            <>
-                                <div className="container-fluid">
-                                    <NavUser />
-                                    <UsuarioNav />
-                                    <main>
-                                        <Dasboard />
-                                    </main>
-                                </div>
-                            </>
+                            <div className="container">
+                                <NavUser />
+                                <UsuarioNav />
+                                <main>
+                                    <Dasboard />
+                                </main>
+                            </div>
                         </ProtectedRoute>
                     }
                 />

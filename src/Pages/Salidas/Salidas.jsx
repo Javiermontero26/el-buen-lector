@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useRef } from 'react';
+import React, { useEffect, useState } from 'react';
 
 const Salidas = () => {
   const url = 'http://localhost:8080/apiv1/historial/salida';
@@ -8,10 +8,29 @@ const Salidas = () => {
 
   // Función para obtener los datos de la API
   const fetchApi = async () => {
-    const response = await fetch(url);
-    const responseJSON = await response.json();
-    setSalidasLibros(responseJSON);
-    setSalidasFiltradas(responseJSON); // Inicializamos el filtro con todos los datos
+    // Obtener el token de acceso del localStorage
+    const token = localStorage.getItem('accessToken'); // Asume que siempre habrá un token
+    
+    try {
+      // Realizar la solicitud con el token en los encabezados
+      const response = await fetch(url, {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`,  // Agregar el token al encabezado Authorization
+        },
+      });
+
+      if (response.ok) {
+        const responseJSON = await response.json();
+        setSalidasLibros(responseJSON);
+        setSalidasFiltradas(responseJSON); // Inicializamos el filtro con todos los datos
+      } else {
+        console.error('Error al obtener datos:', response.statusText);
+      }
+    } catch (error) {
+      console.error('Error en la solicitud de API:', error);
+    }
   };
 
   // Llamada a la API al montar el componente

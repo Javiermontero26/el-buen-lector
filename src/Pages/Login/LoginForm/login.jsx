@@ -7,8 +7,6 @@ import { messages } from '../LoginForm/logindatadays';
 import logologin from '../LoginForm/logoblanco.png';
 
 const Login = () => {
-  
-  // Propiedades de las Alertas para Iniciar Sesion
   const notyf = new Notyf({
     duration: 3000,
     position: { x: 'center', y: 'top' },
@@ -20,81 +18,78 @@ const Login = () => {
     maxNotifications: 1,
   });
 
-  // Estado del componente
-  const [username, setUsername] = useState('');
+  const [usuario, setUsuario] = useState('');
   const [password, setPassword] = useState('');
   const [messageOfTheDay, setMessageOfTheDay] = useState('');
-  const [loading, setLoading] = useState(false);  // Para manejar el estado de cargaaaa
-  const [usuarios, setUsuarios] = useState([]);  // Estado para los usuarios
 
-  // Navegación
   const navigate = useNavigate();
 
-  // Obtener los usuarios desde la API al cargar el componente
   useEffect(() => {
     const isAuthenticated = localStorage.getItem('isAuthenticated');
     if (isAuthenticated) {
       navigate('/el_buen_lector/Pages/Dasboard/Dasboard');
     }
 
-    // Mostrar mensaje del día
     const dayOfWeek = new Date().getDay();
     const randomMessageIndex = Math.floor(Math.random() * messages[dayOfWeek].length);
     const message = messages[dayOfWeek][randomMessageIndex];
     setMessageOfTheDay(message);
-
-    // Obtener usuarios desde la API
-    const fetchUsuarios = async () => {
-      try {
-        const response = await fetch('http://localhost:8080/apiv1/usuarios/listar');
-        const data = await response.json();
-        setUsuarios(data);
-      } catch (error) {
-        console.error('Error al obtener usuarios:', error);
-        notyf.error('Error al obtener los usuarios.');
-      }
-    };
-
-    fetchUsuarios();
   }, [navigate]);
 
-  // Manejo del formulario de inicio de sesión
   const handleSubmit = async (event) => {
     event.preventDefault();
-    notyf.dismissAll(); // Cierra todas las notificaciones activas
+    notyf.dismissAll();
 
-    // Mostrar cargando
-    setLoading(true);
+    try {
+      const response = await fetch('http://localhost:8080/api/auth/login', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ usuario, password }),
+      });
 
-    // Buscar el usuario en la lista de usuarios
-    const usuario = usuarios.find(
-      (user) => user.usuario === username && user.password === password
-    );
+      const data = await response.json();
 
-    if (usuario) {
-      // Guardamos la información del usuario en el localStorage
-      localStorage.setItem('isAuthenticated', 'true');
-      localStorage.setItem('role', usuario.rol.nombre);  // El rol lo obtenemos del usuario
-      localStorage.setItem('userName', usuario.usuario);
+      if (response.ok) {
+        // Decodifica el token JWT manualmente
+        const token = data.accessToken;
+        const decodedToken = parseJwt(token); // Decodifica el JWT
+        const rol = decodedToken.rol;  // Obtiene el rol del token
 
-      notyf.success('¡Has iniciado sesión exitosamente!');
+        // Almacena el token y el rol en localStorage
+        localStorage.setItem('accessToken', token);
+        localStorage.setItem('isAuthenticated', 'true');
+        localStorage.setItem('userName', usuario);
+        localStorage.setItem('role', rol);
 
-      // Redirigimos al dashboard según el rol
-      setTimeout(() => {
-        navigate('/el_buen_lector/Pages/Dasboard/Dasboard');
-      }, 1000);
-    } else {
-      // Si no se encuentra el usuario o la contraseña no coincide
-      notyf.error('Usuario y/o contraseña incorrectos.');
+        notyf.success('¡Has iniciado sesión exitosamente!');
+
+        setTimeout(() => {
+          navigate('/el_buen_lector/Pages/Dasboard/Dasboard');
+        }, 1000);
+      } else {
+        const errorMessage = data.message || 'Usuario y/o contraseña incorrectos.';
+        notyf.error(errorMessage);
+      }
+    } catch (error) {
+      console.error('Error en la petición de login:', error);
+      notyf.error('Hubo un error al intentar iniciar sesión. Por favor, inténtalo de nuevo.');
     }
-
-    setLoading(false);  // Termina el estado de carga
   };
+
+  // Función para decodificar el JWT
+  function parseJwt(token) {
+    const base64Url = token.split('.')[1];
+    const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/'); // Asegura que el token sea válido para atob
+    const jsonPayload = decodeURIComponent(atob(base64).split('').map(function(c) {
+      return '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2);
+    }).join(''));
+
+    return JSON.parse(jsonPayload);
+  }
 
   return (
     <div className="container-fluid vh-100">
       <div className="row vh-100">
-        {/* Imagen de fondo */}
         <div className="col-8 p-0 hide-on-small">
           <img
             className="w-100 h-100"
@@ -103,7 +98,6 @@ const Login = () => {
           />
         </div>
 
-        {/* Formulario de login */}
         <div
           className="col-12 col-md-4 d-flex align-items-center justify-content-center vh-100 full-width-on-small"
           style={{ background: 'linear-gradient(135deg, #5de0e6, #004aad)' }}
@@ -115,18 +109,17 @@ const Login = () => {
               <h2 className="mb-3 mt-5 text-white h3 fw-bold">{messageOfTheDay}</h2>
             </div>
 
-            {/* Campo de usuario */}
             <div className="mb-3 mt-5">
               <input
                 type="text"
                 className="form-control rounded"
-                value={username}
-                onChange={(e) => setUsername(e.target.value)}
+                value={usuario}
+                onChange={(e) => setUsuario(e.target.value)}
                 placeholder="Ingresa tu usuario"
+                required
               />
             </div>
 
-            {/* Campo de contraseña */}
             <div className="mb-3">
               <input
                 type="password"
@@ -134,15 +127,14 @@ const Login = () => {
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 placeholder="Ingresa tu contraseña"
+                required
               />
             </div>
 
-            {/* Botón de envío */}
-            <button type="submit" className="btn btn-dark w-100 mt-3" disabled={loading}>
-              {loading ? 'Cargando...' : 'Comencemos'}
+            <button type="submit" className="btn btn-dark w-100 mt-3">
+              Comencemos
             </button>
 
-            {/* Enlace de "Olvidé mi contraseña" */}
             <div className="text-center mt-3">
               <a href="#" className="text-white fw-bold">
                 Olvidé mi contraseña

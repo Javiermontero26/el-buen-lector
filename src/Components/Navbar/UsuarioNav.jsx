@@ -4,8 +4,6 @@ import NavbarAlmacen from './NavbarAlmacen';
 
 const UsuarioNav = () => {
     const role = localStorage.getItem('role');
-    console.log(role)
-
     return (
         <div>
             {role === 'Admin' && <NavbarAdmin />}

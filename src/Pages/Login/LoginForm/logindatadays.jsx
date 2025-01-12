@@ -1,86 +1,99 @@
 export const messages = [
+    // Domingo
     [
-        "¡Espero que tu lunes sea increíble!",
-        "¡Comienza la semana con energía!",
-        "¡Hoy es un nuevo comienzo!",
-        "¡Haz de este lunes algo extraordinario!",
-        "¡Que tu lunes esté lleno de motivación!",
-        "¡Hoy es un buen día para establecer metas!",
-        "¡Disfruta de cada momento de este lunes!",
-        "¡Que tu lunes sea productivo y feliz!",
-        "¡Emprende la semana con una sonrisa!",
-        "¡Cada lunes es una nueva oportunidad!"
+        "¡Es domingo! Un día para descansar y preparar la semana que viene.",
+        "¡Hoy es domingo! Reflexiona y disfruta de la calma antes de la nueva semana.",
+        "¡Domingo de tranquilidad! Es el momento perfecto para relajarte y reflexionar.",
+        "¡Disfruta de este domingo, recarga energías para afrontar la nueva semana!",
+        "¡El domingo es un buen día para recargar fuerzas y empezar la próxima semana con todo!",
+        "¡Haz algo especial para ti este domingo, el descanso también es productividad!",
+        "¡Domingo de reflexión, de tomar un respiro antes de la semana que llega!",
+        "¡Hoy es domingo! Tómate un tiempo para ti mismo y para tus hobbies.",
+        "¡Prepárate para la nueva semana con una mente descansada y llena de energía!",
+        "¡Que tu domingo esté lleno de paz, amor y buena energía para lo que viene!"
     ],
+
+    // Lunes
     [
-        "¡Espero que tu martes sea genial!",
-        "¡Aprovecha este martes al máximo!",
-        "¡Hoy es un gran día para avanzar!",
-        "¡Sigue construyendo tus sueños!",
-        "¡Haz que este martes cuente!",
-        "¡El esfuerzo de hoy trae recompensas mañana!",
-        "¡Que tengas un martes lleno de logros!",
-        "¡Sigue con tu buena energía!",
-        "¡Un día más para brillar!",
-        "¡Recuerda disfrutar del camino!"
+        "¡Vamos con todo este lunes, un día para nuevos comienzos!",
+        "¡Comienza la semana con toda la energía positiva!",
+        "¡Este lunes es la oportunidad perfecta para alcanzar nuevas metas!",
+        "¡Hoy es un gran día para establecer nuevos proyectos!",
+        "¡Haz de este lunes algo extraordinario, es un nuevo comienzo!",
+        "¡Aprovecha este lunes para planificar una semana exitosa!",
+        "¡Es lunes, comienza a trabajar por lo que más deseas!",
+        "¡Hoy es el primer paso hacia grandes logros esta semana!",
+        "¡Que tu lunes sea productivo y lleno de motivación!",
+        "¡El lunes es para sentar las bases de una gran semana!"
     ],
+
+    // Martes
     [
-        "¡Espero que tu miércoles sea fantástico!",
-        "¡Felicidades, ya estás a mitad de semana!",
-        "¡El miércoles es el nuevo viernes!",
-        "¡Mantén la motivación alta hoy!",
-        "¡Haz algo especial este miércoles!",
-        "¡Disfruta de cada pequeño logro!",
-        "¡Hoy es un buen día para reflexionar!",
-        "¡Aprovecha la energía de mitad de semana!",
-        "¡Tu esfuerzo será recompensado!",
-        "¡Que tengas un miércoles inspirador!"
+        "¡El martes es el día perfecto para seguir avanzando!",
+        "¡Aprovecha este martes para dar un paso más hacia tus sueños!",
+        "¡Martes de productividad, de seguir creciendo y aprendiendo!",
+        "¡Haz que este martes sea aún más grandioso que el lunes!",
+        "¡Este martes es tu oportunidad de brillar y seguir adelante!",
+        "¡Recuerda que todo esfuerzo de hoy trae recompensas mañana!",
+        "¡Martes lleno de logros y energía positiva para ti!",
+        "¡Este martes será el día en el que tomarás nuevas decisiones!",
+        "¡Sigue adelante, cada martes es una nueva oportunidad!",
+        "¡Haz que este martes cuente para tu éxito personal!"
     ],
+
+    // Miércoles
     [
-        "¡Espero que tu jueves sea grandioso!",
-        "¡Ya casi llegas al fin de semana!",
-        "¡Un jueves es para preparar el éxito!",
-        "¡Haz que hoy cuente!",
-        "¡Sonríe, el viernes está cerca!",
-        "¡Sigue avanzando hacia tus metas!",
-        "¡Hoy es un buen día para agradecer!",
-        "¡Mantén la vista en lo positivo!",
-        "¡Tu esfuerzo vale la pena!",
-        "¡Que tu jueves esté lleno de buenas vibras!"
+        "¡Es miércoles! Ya superaste la mitad de la semana, sigue con fuerza.",
+        "¡Mitad de semana! Aprovecha el impulso y sigue adelante.",
+        "¡El miércoles es el nuevo viernes! Aprovecha esta oportunidad.",
+        "¡A mitad de semana, reflexiona y sigue avanzando con energía!",
+        "¡Este miércoles es perfecto para hacer algo que te inspire!",
+        "¡Haz algo especial este miércoles, no dejes que pase desapercibido!",
+        "¡Ya casi llegamos al fin de semana, aprovecha esta energía!",
+        "¡Hoy es un buen día para celebrar tus logros, aunque sean pequeños!",
+        "¡Miércoles lleno de reflexión, crecimiento y nuevos retos!",
+        "¡El miércoles te invita a hacer un alto y disfrutar de lo que lograste!"
     ],
+
+    // Jueves
     [
-        "¡Espero que tu viernes sea increíble!",
-        "¡Es viernes, celebrémoslo!",
-        "¡Casi es tiempo de relajarse!",
-        "¡Termina la semana con buen pie!",
-        "¡Hoy es un buen día para planear lo que viene!",
-        "¡Haz que tu viernes brille!",
-        "¡La diversión comienza hoy!",
-        "¡Disfruta de tu día al máximo!",
-        "¡Recuerda hacer algo que te haga feliz!",
-        "¡Que tengas un viernes inolvidable!"
+        "¡Casi es viernes! Hoy es el día para seguir persiguiendo tus sueños.",
+        "¡Un jueves lleno de buenas vibras y energía positiva!",
+        "¡Haz que este jueves sea la antesala de un gran fin de semana!",
+        "¡Jueves de oportunidades, hoy puedes dar un paso más hacia tus metas!",
+        "¡Hoy es jueves, el día perfecto para avanzar hacia el éxito!",
+        "¡Mantén la motivación alta, ya casi llegas a la meta de la semana!",
+        "¡Recuerda que cada jueves es una oportunidad para ser mejor!",
+        "¡Este jueves puede ser el día que te acerque a tus sueños!",
+        "¡Un jueves para reflexionar, agradecer y seguir creciendo!",
+        "¡Haz que este jueves sea un día productivo y lleno de gratitud!"
     ],
+
+    // Viernes
     [
-        "¡Espero que tu sábado sea relajante!",
-        "¡Disfruta de tu merecido descanso!",
-        "¡Es sábado, aprovecha el tiempo libre!",
-        "¡Haz algo divertido hoy!",
-        "¡Que tu sábado esté lleno de alegría!",
-        "¡Un buen día para salir y explorar!",
-        "¡Recarga energías para la semana que viene!",
-        "¡Disfruta de momentos con tus seres queridos!",
-        "¡Haz algo que te apasione hoy!",
-        "¡Que tengas un sábado maravilloso!"
+        "¡Es viernes, el fin de semana está a la vista! ¡Aprovecha el día!",
+        "¡Disfruta de este viernes, un día para cerrar la semana con éxito!",
+        "¡Hoy es viernes, el día perfecto para terminar la semana con fuerza!",
+        "¡Viernes de celebración! ¡Haz algo divertido y disfruta al máximo!",
+        "¡Este viernes te invita a disfrutar lo que has logrado durante la semana!",
+        "¡Haz que este viernes sea memorable y lleno de buenos momentos!",
+        "¡Viernes de éxito! Termina la semana con todo lo que tienes.",
+        "¡Recuerda que el viernes es solo el comienzo del descanso!",
+        "¡Haz que tu viernes brille, solo queda un día para el fin de semana!",
+        "¡Viernes, celebra todo lo que has alcanzado esta semana!"
     ],
+
+    // Sábado
     [
-        "¡Espero que tu domingo sea reparador!",
-        "¡Un día para descansar y recargar!",
-        "¡Disfruta de la tranquilidad del domingo!",
-        "¡Prepárate para una nueva semana!",
-        "¡Haz algo especial para ti hoy!",
-        "¡Reflexiona sobre la semana pasada!",
-        "¡Dedica tiempo a tus hobbies!",
-        "¡Que tu domingo sea sereno y pleno!",
-        "¡Haz planes para la próxima semana!",
-        "¡Que tengas un domingo lleno de amor y paz!"
+        "¡Es sábado! Un día para descansar, disfrutar y recargar energías.",
+        "¡Sábado relajante! Haz algo que te apasione y disfrútalo al máximo.",
+        "¡Este sábado es para ti! Aprovecha para hacer lo que más te gusta.",
+        "¡Que tu sábado sea un día lleno de alegría y momentos inolvidables!",
+        "¡Recarga energías este sábado para enfrentar la nueva semana con fuerza!",
+        "¡Haz algo divertido este sábado, es tu día para desconectar!",
+        "¡Este sábado es para descansar, pero también para planear tus próximos pasos!",
+        "¡Sábado de exploración! Sal, disfruta y recarga energías para la semana que viene.",
+        "¡Haz algo especial este sábado, el tiempo es ahora!",
+        "¡Sábado, el día perfecto para relajarte y hacer lo que te hace feliz!"
     ]
 ];

@@ -8,7 +8,8 @@ const Libros = () => {
   const urlAutores = 'http://localhost:8080/apiv1/autores/listar';
 
   const [libros, setLibros] = useState([]);
-  const tablalibros = useRef(null);
+  const [librosFiltrados, setLibrosFiltrados] = useState([]);
+  const [searchQuery, setSearchQuery] = useState('');
   const [autores, setAutores] = useState([]);
   const [nuevoLibro, setNuevoLibro] = useState({ titulo: '', fechaPublicacion: '', idAutor: '' });
   const [nuevoAutor, setNuevoAutor] = useState({ nombre: '' });
@@ -17,16 +18,42 @@ const Libros = () => {
 
   const notyf = new Notyf();
 
-  // Obtener los libros desde la API
+  // Función para obtener los datos de la API
   const fetchLibros = async () => {
-    const response = await fetch(urlLibros);
-    const responseJSON = await response.json();
-    setLibros(responseJSON);
+    // Obtener el token de acceso del localStorage
+    const token = localStorage.getItem('accessToken');
+
+    try {
+      // Realizar la solicitud con el token en los encabezados
+      const response = await fetch(urlLibros, {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`,  
+        },
+      });
+
+      if (response.ok) {
+        const responseJSON = await response.json();
+        setLibros(responseJSON);
+        setLibrosFiltrados(responseJSON); 
+      } else {
+        console.error('Error al obtener datos:', response.statusText);
+      }
+    } catch (error) {
+      console.error('Error en la solicitud de API:', error);
+    }
   };
 
   // Obtener los autores desde la API
   const fetchAutores = async () => {
-    const response = await fetch(urlAutores);
+    const token = localStorage.getItem('accessToken');
+
+    const response = await fetch(urlAutores, {
+      headers: {
+        'Authorization': `Bearer ${token}`,
+      },
+    });
     const responseJSON = await response.json();
     setAutores(responseJSON);
   };
@@ -38,18 +65,21 @@ const Libros = () => {
       return;
     }
 
+    const token = localStorage.getItem('accessToken');
+
     const response = await fetch('http://localhost:8080/apiv1/libros', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
+        'Authorization': `Bearer ${token}`,
       },
       body: JSON.stringify(nuevoLibro),
     });
 
     if (response.ok) {
-      fetchLibros(); // Recargar la lista de libros
-      setModalShow(false); // Cerrar el modal
-      setNuevoLibro({ titulo: '', fechaPublicacion: '', idAutor: '' }); // Limpiar el formulario
+      fetchLibros();
+      setModalShow(false);
+      setNuevoLibro({ titulo: '', fechaPublicacion: '', idAutor: '' });
       notyf.success('Libro agregado correctamente');
     } else {
       notyf.error('Este Libro ya existe');
@@ -63,10 +93,13 @@ const Libros = () => {
       return;
     }
 
+    const token = localStorage.getItem('accessToken');
+
     const response = await fetch('http://localhost:8080/apiv1/autores/add', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
+        'Authorization': `Bearer ${token}`,
       },
       body: JSON.stringify(nuevoAutor),
     });
@@ -111,7 +144,6 @@ const Libros = () => {
     setModalAutorShow(false);
   };
 
-
   useEffect(() => {
     fetchLibros();
     fetchAutores();
@@ -131,29 +163,56 @@ const Libros = () => {
     });
   };
 
-  // DataTable 
-  useEffect(() => {
-    if (libros.length > 0 && !$.fn.dataTable.isDataTable(tablalibros.current)) {
-      $(tablalibros.current).DataTable({
-        paging: true,
-        lengthChange: false,
-        searching: true,
-        ordering: false,
-        info: false,
-        autoWidth: true,
-        responsive: true,
-        language: {
-          search: "Buscar Libro:",
-          paginate: {
-            previous: "Anterior",
-            next: "Siguiente",
-          },
-        },
-      });
-    }
-  }, [libros]);
+  //-------------- BUSQUEDA ------------//
 
+  // Función para manejar la búsqueda
+  const handleSearch = (event) => {
+    const query = event.target.value.toLowerCase();
+    setSearchQuery(query);
 
+    const filtered = libros.filter((libro) =>
+      libro.titulo.toLowerCase().includes(query) ||
+      libro.fechaPublicacion.toLowerCase().includes(query) ||
+      libro.autor.nombre.toLowerCase().includes(query)
+    );
+
+    setLibrosFiltrados(filtered);
+  };
+
+  // Función para limpiar el campo de búsqueda
+  const clearSearch = () => {
+    setSearchQuery('');
+    setLibrosFiltrados(libros);
+  };
+
+  //-------------- FIN BUSQUEDA ------------//
+
+  // Exportar a PDF
+  const exportToPDF = () => {
+    const { jsPDF } = window.jspdf;
+    const doc = new jsPDF();
+
+    // Título del PDF
+    doc.setFontSize(18);
+    doc.setTextColor(255, 0, 0);
+    doc.text("LISTA DE LIBROS", 14, 16);
+
+    const tableColumn = ["Título", "Fecha Pulbicacíon", "Autor"];
+    const tableRows = librosFiltrados.map(libro => [
+      libro.titulo,
+      libro.fechaPublicacion,
+      libro.autor.nombre,
+    ]);
+
+    doc.autoTable({
+      head: [tableColumn],
+      body: tableRows,
+      startY: 20,
+      theme: 'grid',
+    });
+
+    doc.output('dataurlnewwindow');
+  };
 
   return (
     <div className="container mt-4">
@@ -162,11 +221,41 @@ const Libros = () => {
           <div className="d-flex align-items-center">
             <h2 className="m-0 text-white flex-grow-1">Lista de Libros</h2>
             <div className="d-flex">
-              <button className="btn btn-light" onClick={() => setModalShow(true)}>
+              <button className="btn btn-light me-2" onClick={exportToPDF}>
+                <i className="bi bi-file-earmark-pdf me-2 text-danger h5"></i>Exportar a PDF
+              </button>
+              <button
+                className="btn btn-light"
+                onClick={() => setModalShow(true)}
+                disabled={localStorage.getItem('role') !== 'Almacenero'}>
                 Agregar
               </button>
             </div>
           </div>
+        </div>
+      </div>
+
+      {/* Barra de búsqueda */}
+      <div className="mb-3 d-flex align-items-center col-12 col-md-12 col-lg-3 ms-auto">
+        <label htmlFor="Busquedas" className="me-2">Filtrar:</label>
+        <div className="position-relative">
+          <input
+            type="text"
+            className="form-control"
+            value={searchQuery}
+            onChange={handleSearch}
+          />
+
+          {/* Limpiar Texto con la X*/}
+          {searchQuery && (
+            <span
+              className="position-absolute top-50 end-0 translate-middle-y pe-2"
+              onClick={clearSearch}
+              style={{ cursor: 'pointer' }}
+            >
+              <i className="bi bi-x" style={{ fontSize: '1.5rem', color: 'black' }}></i>
+            </span>
+          )}
         </div>
       </div>
 
@@ -284,7 +373,7 @@ const Libros = () => {
 
       {/* Tabla de Libros */}
       <div className="table-container">
-        <table ref={tablalibros} className="table table-striped" id="tablaLibros">
+        <table className="table table-striped">
           <thead>
             <tr>
               <th hidden>ID Libro</th>
@@ -296,7 +385,7 @@ const Libros = () => {
             </tr>
           </thead>
           <tbody>
-            {libros.map((libro) => (
+            {librosFiltrados.map((libro) => (
               <tr key={libro.id}>
                 <td hidden>{libro.idLibro}</td>
                 <td>{libro.titulo}</td>
@@ -316,8 +405,6 @@ const Libros = () => {
           </tbody>
         </table>
       </div>
-
-
     </div>
   );
 };
