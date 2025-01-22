@@ -97,7 +97,8 @@ const Salidas = () => {
         <div className="card-header bg-primary border-top p-3">
           <div className="d-flex justify-content-between align-items-center">
             <h2 className="m-0 text-white">Salidas de Libros</h2>
-            <button className="btn btn-light me-2" onClick={exportToPDF}>
+            <button className="btn btn-light me-2" onClick={exportToPDF}
+            disabled={localStorage.getItem('role') !== 'Admin'}>
               <i className="bi bi-file-earmark-pdf me-2 text-danger h5"></i>Exportar a PDF
             </button>
           </div>

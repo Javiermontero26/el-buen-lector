@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Notyf } from 'notyf';
 import Select from 'react-select';
 import 'notyf/notyf.min.css';
@@ -15,28 +15,25 @@ const Libros = () => {
   const [nuevoAutor, setNuevoAutor] = useState({ nombre: '' });
   const [modalShow, setModalShow] = useState(false);
   const [modalAutorShow, setModalAutorShow] = useState(false);
+  const [modalEditShow, setModalEditShow] = useState(false);
+  const [libroEditar, setLibroEditar] = useState(null);
 
   const notyf = new Notyf();
 
-  // Función para obtener los datos de la API
   const fetchLibros = async () => {
-    // Obtener el token de acceso del localStorage
     const token = localStorage.getItem('accessToken');
-
     try {
-      // Realizar la solicitud con el token en los encabezados
       const response = await fetch(urlLibros, {
         method: 'GET',
         headers: {
           'Content-Type': 'application/json',
-          'Authorization': `Bearer ${token}`,  
+          'Authorization': `Bearer ${token}`,
         },
       });
-
       if (response.ok) {
         const responseJSON = await response.json();
         setLibros(responseJSON);
-        setLibrosFiltrados(responseJSON); 
+        setLibrosFiltrados(responseJSON);
       } else {
         console.error('Error al obtener datos:', response.statusText);
       }
@@ -45,10 +42,8 @@ const Libros = () => {
     }
   };
 
-  // Obtener los autores desde la API
   const fetchAutores = async () => {
     const token = localStorage.getItem('accessToken');
-
     const response = await fetch(urlAutores, {
       headers: {
         'Authorization': `Bearer ${token}`,
@@ -58,7 +53,6 @@ const Libros = () => {
     setAutores(responseJSON);
   };
 
-  // Agregar un nuevo libro a la API
   const agregarLibro = async () => {
     if (!nuevoLibro.titulo || !nuevoLibro.fechaPublicacion || !nuevoLibro.idAutor) {
       notyf.error('Todos los campos son requeridos');
@@ -66,7 +60,6 @@ const Libros = () => {
     }
 
     const token = localStorage.getItem('accessToken');
-
     const response = await fetch('http://localhost:8080/apiv1/libros', {
       method: 'POST',
       headers: {
@@ -86,7 +79,6 @@ const Libros = () => {
     }
   };
 
-  // Agregar un nuevo autor a la API
   const agregarAutor = async () => {
     if (!nuevoAutor.nombre) {
       notyf.error('El nombre del autor es requerido');
@@ -94,7 +86,6 @@ const Libros = () => {
     }
 
     const token = localStorage.getItem('accessToken');
-
     const response = await fetch('http://localhost:8080/apiv1/autores/add', {
       method: 'POST',
       headers: {
@@ -107,14 +98,39 @@ const Libros = () => {
     if (response.ok) {
       setNuevoAutor({ nombre: '' });
       fetchAutores();
-      setModalAutorShow(false); // Cerrar el modal de autor
+      setModalAutorShow(false);
       notyf.success('Autor agregado correctamente');
     } else {
       notyf.error('Hubo un error al agregar el autor');
     }
   };
 
-  // Manejar los cambios en los campos del formulario
+  const editarLibro = async () => {
+    if (!libroEditar.titulo || !libroEditar.fechaPublicacion || !libroEditar.idAutor) {
+      notyf.error('Todos los campos son requeridos');
+      return;
+    }
+
+    const token = localStorage.getItem('accessToken');
+    const response = await fetch(`http://localhost:8080/apiv1/libros/actualizar/${libroEditar.idLibro}`, {
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${token}`,
+      },
+      body: JSON.stringify(libroEditar),
+    });
+
+    if (response.ok) {
+      fetchLibros();
+      setModalEditShow(false);
+      setLibroEditar(null);
+      notyf.success('Libro actualizado correctamente');
+    } else {
+      notyf.error('Hubo un error al actualizar el libro');
+    }
+  };
+
   const handleChange = (e) => {
     const { name, value } = e.target;
     setNuevoLibro({
@@ -123,7 +139,14 @@ const Libros = () => {
     });
   };
 
-  // Manejar los cambios en el formulario de autor
+  const handleChangeEdit = (e) => {
+    const { name, value } = e.target;
+    setLibroEditar({
+      ...libroEditar,
+      [name]: value,
+    });
+  };
+
   const handleChangeAutor = (e) => {
     const { name, value } = e.target;
     setNuevoAutor({
@@ -132,16 +155,34 @@ const Libros = () => {
     });
   };
 
-  // Función para limpiar el formulario y cerrar el modal
   const handleCloseModal = () => {
     setNuevoLibro({ titulo: '', fechaPublicacion: '', idAutor: '' });
     setModalShow(false);
   };
 
-  // Función para limpiar el formulario de autor y cerrar el modal
   const handleCloseModalAutor = () => {
     setNuevoAutor({ nombre: '' });
     setModalAutorShow(false);
+  };
+
+  const handleCloseModalEdit = () => {
+    setLibroEditar(null);
+    setModalEditShow(false);
+  };
+
+  const openModalEdit = (libro) => {
+    setLibroEditar({
+      idLibro: libro.idLibro,
+      titulo: libro.titulo,
+      fechaPublicacion: libro.fechaPublicacion,
+      idAutor: libro.autor.idAutor,
+    });
+    setModalEditShow(true);
+  };
+
+  const clearSearch = () => {
+    setSearchQuery('');
+    setLibrosFiltrados(libros);
   };
 
   useEffect(() => {
@@ -149,13 +190,11 @@ const Libros = () => {
     fetchAutores();
   }, []);
 
-  // Opciones para React-Select (de los autores)
   const autorOptions = autores.map((autor) => ({
     value: autor.idAutor,
     label: autor.nombre,
   }));
 
-  // Manejador de cambio en el select de autor
   const handleSelectChange = (selectedOption) => {
     setNuevoLibro({
       ...nuevoLibro,
@@ -163,9 +202,6 @@ const Libros = () => {
     });
   };
 
-  //-------------- BUSQUEDA ------------//
-
-  // Función para manejar la búsqueda
   const handleSearch = (event) => {
     const query = event.target.value.toLowerCase();
     setSearchQuery(query);
@@ -179,20 +215,9 @@ const Libros = () => {
     setLibrosFiltrados(filtered);
   };
 
-  // Función para limpiar el campo de búsqueda
-  const clearSearch = () => {
-    setSearchQuery('');
-    setLibrosFiltrados(libros);
-  };
-
-  //-------------- FIN BUSQUEDA ------------//
-
-  // Exportar a PDF
   const exportToPDF = () => {
     const { jsPDF } = window.jspdf;
     const doc = new jsPDF();
-
-    // Título del PDF
     doc.setFontSize(18);
     doc.setTextColor(255, 0, 0);
     doc.text("LISTA DE LIBROS", 14, 16);
@@ -221,13 +246,11 @@ const Libros = () => {
           <div className="d-flex align-items-center">
             <h2 className="m-0 text-white flex-grow-1">Lista de Libros</h2>
             <div className="d-flex">
-              <button className="btn btn-light me-2" onClick={exportToPDF}>
+              <button className="btn btn-light me-2" onClick={exportToPDF}
+                disabled={localStorage.getItem('role') !== 'Admin'}>
                 <i className="bi bi-file-earmark-pdf me-2 text-danger h5"></i>Exportar a PDF
               </button>
-              <button
-                className="btn btn-light"
-                onClick={() => setModalShow(true)}
-                disabled={localStorage.getItem('role') !== 'Almacenero'}>
+              <button className="btn btn-light" onClick={() => setModalShow(true)}>
                 Agregar
               </button>
             </div>
@@ -235,7 +258,6 @@ const Libros = () => {
         </div>
       </div>
 
-      {/* Barra de búsqueda */}
       <div className="mb-3 d-flex align-items-center col-12 col-md-12 col-lg-3 ms-auto">
         <label htmlFor="Busquedas" className="me-2">Filtrar:</label>
         <div className="position-relative">
@@ -245,8 +267,6 @@ const Libros = () => {
             value={searchQuery}
             onChange={handleSearch}
           />
-
-          {/* Limpiar Texto con la X*/}
           {searchQuery && (
             <span
               className="position-absolute top-50 end-0 translate-middle-y pe-2"
@@ -259,7 +279,6 @@ const Libros = () => {
         </div>
       </div>
 
-      {/* Modal Libro */}
       <div className={`modal fade ${modalShow ? 'show' : ''}`} style={{ display: modalShow ? 'block' : 'none' }} tabIndex="-1" aria-hidden="true">
         <div className="modal-dialog">
           <div className="modal-content">
@@ -270,7 +289,7 @@ const Libros = () => {
             <div className="modal-body">
               <form>
                 <div className="mb-3">
-                  <label htmlFor="titulo" className="form-label" required>Título</label>
+                  <label htmlFor="titulo" className="form-label">Título</label>
                   <input
                     type="text"
                     className="form-control"
@@ -278,7 +297,6 @@ const Libros = () => {
                     name="titulo"
                     value={nuevoLibro.titulo}
                     onChange={handleChange}
-                    required
                   />
                 </div>
                 <div className="mb-3">
@@ -290,52 +308,100 @@ const Libros = () => {
                     name="fechaPublicacion"
                     value={nuevoLibro.fechaPublicacion}
                     onChange={handleChange}
-                    required
                   />
                 </div>
                 <div className="mb-3">
                   <label htmlFor="idAutor" className="form-label">Autor</label>
-                  <div className="d-flex">
-
+                  <div className="d-flex align-items-center">
                     <div className="flex-grow-1 me-2">
                       <Select
-                        className="react-select-container"
                         id="idAutor"
-                        options={autores.map(autor => ({ value: autor.idAutor, label: autor.nombre }))}
-                        onChange={(selectedOption) => setNuevoLibro({ ...nuevoLibro, idAutor: selectedOption ? selectedOption.value : '' })}
-                        value={autores.find(autor => autor.idAutor === nuevoLibro.idAutor) ? { value: nuevoLibro.idAutor, label: autores.find(autor => autor.idAutor === nuevoLibro.idAutor).nombre } : null}
+                        options={autorOptions}
+                        onChange={handleSelectChange}
+                        value={autorOptions.find((option) => option.value === nuevoLibro.idAutor) || null}
                         placeholder="Selecciona un autor"
-                        isClearable
                       />
                     </div>
-
-                    <div>
-                      <button
-                        type="button"
-                        className="btn btn-success"
-                        onClick={() => setModalAutorShow(true)}
-                      >
-                        Agregar
-                      </button>
-                    </div>
+                    <button
+                      type="button"
+                      className="btn btn-success btn-sm"
+                      onClick={() => setModalAutorShow(true)}
+                    >
+                      Agregar Autor
+                    </button>
                   </div>
                 </div>
-
               </form>
             </div>
             <div className="modal-footer">
-              <button type="button" className="btn btn-secondary" onClick={handleCloseModal}>
-                Cancelar
-              </button>
-              <button type="button" className="btn btn-primary" onClick={agregarLibro}>
-                Guardar Libro
-              </button>
+              <button type="button" className="btn btn-secondary" onClick={handleCloseModal}>Cancelar</button>
+              <button type="button" className="btn btn-primary" onClick={agregarLibro}>Guardar Libro</button>
             </div>
           </div>
         </div>
       </div>
 
-      {/* Modal Autor */}
+      <div className={`modal fade ${modalEditShow ? 'show' : ''}`} style={{ display: modalEditShow ? 'block' : 'none' }} tabIndex="-1" aria-hidden="true">
+        <div className="modal-dialog">
+          <div className="modal-content">
+            <div className="modal-header">
+              <h5 className="modal-title">Editar Libro</h5>
+              <button type="button" className="btn-close" onClick={handleCloseModalEdit} aria-label="Close"></button>
+            </div>
+            <div className="modal-body">
+              <form>
+                <div className="mb-3">
+                  <label htmlFor="titulo" className="form-label">Título</label>
+                  <input
+                    type="text"
+                    className="form-control"
+                    id="titulo"
+                    name="titulo"
+                    value={libroEditar?.titulo || ''}
+                    onChange={handleChangeEdit}
+                  />
+                </div>
+                <div className="mb-3">
+                  <label htmlFor="fechaPublicacion" className="form-label">Fecha de Publicación</label>
+                  <input
+                    type="date"
+                    className="form-control"
+                    id="fechaPublicacion"
+                    name="fechaPublicacion"
+                    value={libroEditar?.fechaPublicacion || ''}
+                    onChange={handleChangeEdit}
+                  />
+                </div>
+                <div className="mb-3">
+                  <label htmlFor="idAutor" className="form-label">Autor</label>
+                  <div className="d-flex align-items-center">
+                    <div className="flex-grow-1 me-2">
+                      <Select
+                        id="idAutor"
+                        options={autorOptions}
+                        value={autorOptions.find((option) => option.value === libroEditar?.idAutor) || null}
+                        onChange={(selectedOption) => setLibroEditar({ ...libroEditar, idAutor: selectedOption ? selectedOption.value : '' })}
+                      />
+                    </div>
+                    <button
+                      type="button"
+                      className="btn btn-success btn-sm"
+                      onClick={() => setModalAutorShow(true)}
+                    >
+                      Agregar Autor
+                    </button>
+                  </div>
+                </div>
+              </form>
+            </div>
+            <div className="modal-footer">
+              <button type="button" className="btn btn-secondary" onClick={handleCloseModalEdit}>Cancelar</button>
+              <button type="button" className="btn btn-primary" onClick={editarLibro}>Actualizar Libro</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
       <div className={`modal fade ${modalAutorShow ? 'show' : ''}`} style={{ display: modalAutorShow ? 'block' : 'none' }} tabIndex="-1" aria-hidden="true">
         <div className="modal-dialog">
           <div className="modal-content">
@@ -346,7 +412,7 @@ const Libros = () => {
             <div className="modal-body">
               <form>
                 <div className="mb-3">
-                  <label htmlFor="nombre" className="form-label">Nombre del Autor</label>
+                  <label htmlFor="nombre" className="form-label">Nombre</label>
                   <input
                     type="text"
                     className="form-control"
@@ -354,24 +420,18 @@ const Libros = () => {
                     name="nombre"
                     value={nuevoAutor.nombre}
                     onChange={handleChangeAutor}
-                    required
                   />
                 </div>
               </form>
             </div>
             <div className="modal-footer">
-              <button type="button" className="btn btn-secondary" onClick={handleCloseModalAutor}>
-                Cancelar
-              </button>
-              <button type="button" className="btn btn-primary" onClick={agregarAutor}>
-                Guardar Autor
-              </button>
+              <button type="button" className="btn btn-secondary" onClick={handleCloseModalAutor}>Cancelar</button>
+              <button type="button" className="btn btn-primary" onClick={agregarAutor}>Agregar Autor</button>
             </div>
           </div>
         </div>
       </div>
 
-      {/* Tabla de Libros */}
       <div className="table-container">
         <table className="table table-striped">
           <thead>
@@ -386,14 +446,14 @@ const Libros = () => {
           </thead>
           <tbody>
             {librosFiltrados.map((libro) => (
-              <tr key={libro.id}>
+              <tr key={libro.idLibro}>
                 <td hidden>{libro.idLibro}</td>
                 <td>{libro.titulo}</td>
                 <td>{libro.fechaPublicacion}</td>
                 <td hidden>{libro.autor.idAutor}</td>
                 <td>{libro.autor.nombre}</td>
                 <td>
-                  <span className="edit" title="Editar" onClick={() => openModal('edit')}>
+                  <span className="edit" title="Editar" onClick={() => openModalEdit(libro)}>
                     <i className="material-icons">&#xE254;</i>
                   </span>
                   <span className="delete" title="Eliminar" onClick={() => openModal('delete')}>

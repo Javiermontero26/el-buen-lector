@@ -66,13 +66,10 @@ const Login = () => {
         setTimeout(() => {
           navigate('/el_buen_lector/Pages/Dasboard/Dasboard');
         }, 1000);
-      } else {
-        const errorMessage = data.message || 'Usuario y/o contraseña incorrectos.';
-        notyf.error(errorMessage);
       }
     } catch (error) {
       console.error('Error en la petición de login:', error);
-      notyf.error('Hubo un error al intentar iniciar sesión. Por favor, inténtalo de nuevo.');
+      notyf.error('Usuario y/o contraseña incorrectos | o Usuario Inactivo.');
     }
   };
 

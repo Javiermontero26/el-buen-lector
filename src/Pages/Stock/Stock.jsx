@@ -268,11 +268,11 @@ const Stock = () => {
           <div className="d-flex justify-content-between align-items-center">
             <h2 className="m-0 text-white">Stock de Libros</h2>
             <div>
-              <button className="btn btn-light me-2" onClick={exportToPDF}>
+              <button className="btn btn-light me-2" onClick={exportToPDF}
+              disabled={localStorage.getItem('role') !== 'Admin'}>
                 <i className="bi bi-file-earmark-pdf me-2 text-danger h5"></i>Exportar a PDF
               </button>
-              <button className="btn btn-light ms-2" onClick={() => setModalShowEntrada(true)}
-                disabled={localStorage.getItem('role') !== 'Almacenero'}>
+              <button className="btn btn-light ms-2" onClick={() => setModalShowEntrada(true)}>
                 Agregar Entrada
               </button>
               <button className="btn btn-light ms-2" onClick={() => setModalShowSalida(true)}>

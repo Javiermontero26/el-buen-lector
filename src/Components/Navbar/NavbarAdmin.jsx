@@ -30,10 +30,6 @@
                     </div>
                     <div className="sidebar">
                         {/* Usamos "Active para" determinar si el enlace debe tener la clase 'active' */}
-                        <Link className={Active('/el_buen_lector/Pages/Dasboard/Dasboard') ? 'active' : ''} to="/el_buen_lector/Pages/Dasboard/Dasboard">
-                            <span className="material-symbols-sharp">grid_view</span>
-                            <h3>Inicio</h3>
-                        </Link>
                         <Link className={Active('/el_buen_lector/Pages/Libros/Libros') ? 'active' : ''} to="/el_buen_lector/Pages/Libros/Libros">
                             <span className="material-symbols-sharp">library_books</span>
                             <h3>Libros</h3>

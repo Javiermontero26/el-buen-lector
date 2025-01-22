@@ -450,3 +450,13 @@ table.table td .delete {
     }
 
 }
+
+/* Reducir el tamaño de las notificaciones de Notyf */
+.notyf__toast {
+    font-size: 14px;  /* Tamaño de fuente más pequeño */
+    padding: 8px 12px;  /* Relleno más pequeño */
+    max-width: 250px;  /* Ancho máximo */
+    width: auto;  /* Ancho auto */
+    line-height: 1.3;  /* Espaciado entre líneas */
+  }
+  
