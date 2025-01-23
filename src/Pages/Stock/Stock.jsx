@@ -4,11 +4,12 @@ import Select from 'react-select';
 
 const Stock = () => {
 
-  // APIS BUEN LECTOR
+  // APIS STOCK
   const urlGet = 'http://localhost:8080/apiv1/stocklibros/listar';
   const urlPostEntrada = 'http://localhost:8080/apiv1/stocklibros/registrar';
   const urlPostSalida = 'http://localhost:8080/apiv1/stocklibros/salidareg';
   const urlLibros = 'http://localhost:8080/apiv1/libros/listar';
+  const urlUpdateStock = 'http://localhost:8080/api/stock/actualizar';
 
   // ESTADOS
   const tablaStock = useRef(null);
@@ -20,6 +21,8 @@ const Stock = () => {
   const [nuevoStockSalida, setNuevoStockSalida] = useState({ idLibro: '', cantidad: '', motivo: '', stockDisponible: 0 });
   const [modalShowEntrada, setModalShowEntrada] = useState(false);
   const [modalShowSalida, setModalShowSalida] = useState(false);
+  const [modalShowEditar, setModalShowEditar] = useState(false);
+  const [stockAEditar, setStockAEditar] = useState(null);  
   const token = localStorage.getItem('accessToken');
 
   // INSTANCIA PARA USAR NOTYF Y AGREGAR PROPIEDADES A LA ALERTA
@@ -34,14 +37,14 @@ const Stock = () => {
         method: 'GET',
         headers: {
           'Content-Type': 'application/json',
-          'Authorization': `Bearer ${token}`,  // Agregar el token al encabezado Authorization
+          'Authorization': `Bearer ${token}`, 
         },
       });
 
       if (response.ok) {
         const responseJSON = await response.json();
         setStockLibros(responseJSON);
-        setStockFiltrados(responseJSON); // Inicializamos el filtro con todos los datos
+        setStockFiltrados(responseJSON); 
       } else {
         console.error('Error al obtener datos:', response.statusText);
       }
@@ -84,7 +87,7 @@ const Stock = () => {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          'Authorization': `Bearer ${token}`,  // Enviando el token
+          'Authorization': `Bearer ${token}`,  
         },
         body: JSON.stringify({
           idLibro: parseInt(nuevoStockEntrada.idLibro),
@@ -125,7 +128,7 @@ const Stock = () => {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          'Authorization': `Bearer ${token}`,  // Enviando el token
+          'Authorization': `Bearer ${token}`,  
         },
         body: JSON.stringify({
           idLibro: parseInt(nuevoStockSalida.idLibro),
@@ -149,6 +152,53 @@ const Stock = () => {
     }
   };
 
+  //Editar Stock
+  const editarStock = async () => {
+    if (!stockAEditar.idLibro || !stockAEditar.cantidad) {
+      notyf.error('Todos los campos son requeridos');
+      return;
+    }
+
+    if (isNaN(stockAEditar.cantidad) || parseInt(stockAEditar.cantidad) < 0) {
+      notyf.error('La cantidad debe ser un número positivo');
+      return;
+    }
+
+    try {
+      const libroSeleccionado = libros.find(libro => libro.idLibro === stockAEditar.idLibro);
+      if (!libroSeleccionado) {
+        notyf.error('Libro no encontrado');
+        return;
+      }
+
+      const response = await fetch(urlUpdateStock, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`,
+        },
+        body: JSON.stringify({
+          idLibro: stockAEditar.idLibro,
+          cantidad: parseInt(stockAEditar.cantidad),
+          tituloLibro: libroSeleccionado.titulo,
+        }),
+      });
+
+      if (response.ok) {
+        fetchStock();  
+        setModalShowEditar(false);  
+        notyf.success('Stock actualizado correctamente');
+      } else {
+        const errorData = await response.json();
+        notyf.error('Error al actualizar stock: ' + (errorData.message || 'Error desconocido'));
+      }
+    } catch (error) {
+      console.error('Error en la solicitud:', error);
+      notyf.error('Hubo un error al conectar con el servidor.');
+    }
+  };
+
+
   // CON ESTO CERRAMOS LOS MODALES Y SE PIERDEN LOS DATOS ANTES ESCRITOS O SELECCIONADOS
   const handleCloseModalEntrada = () => {
     setNuevoStockEntrada({ idLibro: '', cantidad: '', motivo: '' });
@@ -158,6 +208,20 @@ const Stock = () => {
   const handleCloseModalSalida = () => {
     setNuevoStockSalida({ idLibro: '', cantidad: '', motivo: '', stockDisponible: 0 });
     setModalShowSalida(false);
+  };
+
+  // FUNCIONES DE EDICIÓN
+  const abrirModalEditar = (stock) => {
+    setStockAEditar({
+      idLibro: stock.libro.idLibro,
+      cantidad: stock.cantidadTotal, 
+    });
+    setModalShowEditar(true);  
+  };
+
+  const handleCloseModalEditar = () => {
+    setStockAEditar(null);
+    setModalShowEditar(false);
   };
 
   useEffect(() => {
@@ -178,6 +242,14 @@ const Stock = () => {
       value: stock.libro.idLibro,
       label: stock.libro.titulo,
     }));
+
+  // Función de cambio para cantidad
+  const handleCantidadChangeEditar = (e) => {
+    const value = e.target.value;
+    if (/^[0-9]*$/.test(value)) {
+      setStockAEditar({ ...stockAEditar, cantidad: value });
+    }
+  };
 
   //SELECT ENTRADAS
   const handleSelectChangeEntrada = (selectedOption) => {
@@ -269,7 +341,7 @@ const Stock = () => {
             <h2 className="m-0 text-white">Stock de Libros</h2>
             <div>
               <button className="btn btn-light me-2" onClick={exportToPDF}
-              disabled={localStorage.getItem('role') !== 'Admin'}>
+                disabled={localStorage.getItem('role') !== 'Admin'}>
                 <i className="bi bi-file-earmark-pdf me-2 text-danger h5"></i>Exportar a PDF
               </button>
               <button className="btn btn-light ms-2" onClick={() => setModalShowEntrada(true)}>
@@ -338,7 +410,6 @@ const Stock = () => {
                     value={nuevoStockEntrada.cantidad}
                     onChange={(e) => {
                       const value = e.target.value;
-                      // Solo numeros enteros
                       if (/^[0-9]*$/.test(value)) {
                         setNuevoStockEntrada({ ...nuevoStockEntrada, cantidad: value });
                       }
@@ -467,6 +538,51 @@ const Stock = () => {
         </div>
       )}
 
+      {/* Modal de Editar Stock */}
+      {modalShowEditar && (
+        <div className="modal show" style={{ display: 'block' }} tabIndex="-1" aria-hidden="true">
+          <div className="modal-dialog">
+            <div className="modal-content">
+              <div className="modal-header">
+                <h5 className="modal-title">Editar Stock de Libro</h5>
+                <button type="button" className="btn-close" onClick={handleCloseModalEditar} aria-label="Close"></button>
+              </div>
+              <div className="modal-body">
+                <div className="mb-3">
+                  <label htmlFor="idLibro" className="form-label">Selecciona un Libro</label>
+                  <Select
+                    id="idLibro"
+                    options={libroOptions}
+                    onChange={(selectedOption) => setStockAEditar({ ...stockAEditar, idLibro: selectedOption.value })}
+                    value={libroOptions.find((option) => option.value === stockAEditar.idLibro)}
+                    placeholder="Selecciona un libro"
+                    isClearable isDisabled
+                  />
+                </div>
+
+                <div className="mb-3">
+                  <label htmlFor="cantidad" className="form-label">Cantidad</label>
+                  <input
+                    type="text"
+                    className="form-control"
+                    id="cantidad"
+                    name="cantidad"
+                    value={stockAEditar.cantidad}
+                    onChange={handleCantidadChangeEditar}
+                    required
+                  />
+                </div>
+
+              </div>
+              <div className="modal-footer">
+                <button type="button" className="btn btn-secondary" onClick={handleCloseModalEditar}>Cerrar</button>
+                <button type="button" className="btn btn-primary" onClick={editarStock}>Actualizar Stock</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
       {/* Tabla de Stock */}
       <div className="table-container">
         <table ref={tablaStock} className="table table-striped">
@@ -474,6 +590,7 @@ const Stock = () => {
             <tr>
               <th>Libro</th>
               <th>Stock</th>
+              <th>Acciones</th>
             </tr>
           </thead>
           <tbody>
@@ -481,6 +598,15 @@ const Stock = () => {
               <tr key={skt.idStock}>
                 <td className='col-8'>{skt.libro.titulo}</td>
                 <td>{skt.cantidadTotal}</td>
+                <td>
+                  <span
+                    className={`edit ${localStorage.getItem('role') !== 'Admin' ? 'disabled' : ''}`}
+                    title="Editar"
+                    onClick={() => abrirModalEditar(skt)}
+                    style={{ pointerEvents: localStorage.getItem('role') !== 'Admin' ? 'none' : 'auto', opacity: localStorage.getItem('role') !== 'Admin' ? 0.5 : 1 }}>
+                    <i className="material-icons">&#xE254;</i>
+                  </span>
+                </td>
               </tr>
             ))}
           </tbody>
