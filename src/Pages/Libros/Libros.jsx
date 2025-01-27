@@ -215,30 +215,6 @@ const Libros = () => {
     setLibrosFiltrados(filtered);
   };
 
-  const exportToPDF = () => {
-    const { jsPDF } = window.jspdf;
-    const doc = new jsPDF();
-    doc.setFontSize(18);
-    doc.setTextColor(255, 0, 0);
-    doc.text("LISTA DE LIBROS", 14, 16);
-
-    const tableColumn = ["Título", "Fecha Pulbicacíon", "Autor"];
-    const tableRows = librosFiltrados.map(libro => [
-      libro.titulo,
-      libro.fechaPublicacion,
-      libro.autor.nombre,
-    ]);
-
-    doc.autoTable({
-      head: [tableColumn],
-      body: tableRows,
-      startY: 20,
-      theme: 'grid',
-    });
-
-    doc.output('dataurlnewwindow');
-  };
-
   return (
     <div className="container mt-4">
       <div className="card border-top-0 mb-2">
@@ -246,10 +222,6 @@ const Libros = () => {
           <div className="d-flex align-items-center">
             <h2 className="m-0 text-white flex-grow-1">Lista de Libros</h2>
             <div className="d-flex">
-              <button className="btn btn-light me-2" onClick={exportToPDF}
-                disabled={localStorage.getItem('role') !== 'Admin'}>
-                <i className="bi bi-file-earmark-pdf me-2 text-danger h5"></i>Exportar a PDF
-              </button>
               <button className="btn btn-light" onClick={() => setModalShow(true)}>
                 Agregar
               </button>

@@ -106,7 +106,7 @@ const Configuracion = () => {
             <div className="col-md-8 col-lg-12">
               <div className="card">
                 <div className="card-body">
-                  <div className="mb-3">
+                  <div className="mb-3" hidden>
                     <strong>ID Usuario:</strong>
                     <p>{usuario.idUsuario}</p>
                   </div>
@@ -178,6 +178,7 @@ const Configuracion = () => {
                       <button
                         className="btn btn-primary"
                         onClick={toggleEditing}
+                        is disabled
                       >
                         Editar Perfil
                       </button>

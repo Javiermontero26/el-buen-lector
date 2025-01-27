@@ -118,36 +118,6 @@ const Usuarios = () => {
         setUsuariosFiltradas(usuarios);
     };
 
-    const exportToPDF = () => {
-        const { jsPDF } = window.jspdf;
-        const doc = new jsPDF();
-
-        doc.setFontSize(18);
-        doc.setTextColor(255, 0, 0);
-        doc.text("LISTA DE USUARIOS", 14, 16);
-
-        const tableColumn = ["Nombres", "Apellidos", "Usuario", "Correo", "Telefono", "Rol", "estado"];
-        const tableRows = usuariosFiltradas.map(usu => [
-            usu.nombre,
-            usu.apellidos,
-            usu.usuario,
-            usu.correo,
-            usu.telefono,
-            usu.rol.nombre,
-            usu.estado.nombre,
-        ]);
-
-        doc.autoTable({
-            head: [tableColumn],
-            body: tableRows,
-            startY: 20,
-            theme: 'grid',
-        });
-
-        doc.output('dataurlnewwindow');
-    };
-
-
     const handleDelete = async () => {
         if (!usuarioAEliminar) return;
 
@@ -264,10 +234,6 @@ const Usuarios = () => {
                     <div className="d-flex justify-content-between align-items-center">
                         <h2 className="m-0 text-white">Lista de Usuarios</h2>
                         <div>
-                            <button className="btn btn-light me-2" onClick={exportToPDF}
-                                disabled={localStorage.getItem('role') !== 'Admin'}>
-                                <i className="bi bi-file-earmark-pdf me-2 text-danger h5"></i>Exportar a PDF
-                            </button>
                             <button className="btn btn-light" onClick={() => handleOpenModal()}>Agregar Usuario</button>
                         </div>
                     </div>
