@@ -32,7 +32,7 @@ const Usuarios = () => {
     const notyf = new Notyf();
 
     const fetchUsuarios = async () => {
-        const token = localStorage.getItem('accessToken'); 
+        const token = localStorage.getItem('accessToken');
 
         try {
             const response = await fetch(url, {
@@ -117,6 +117,36 @@ const Usuarios = () => {
         setSearchQuery('');
         setUsuariosFiltradas(usuarios);
     };
+
+    const exportToPDF = () => {
+        const { jsPDF } = window.jspdf;
+        const doc = new jsPDF();
+
+        doc.setFontSize(18);
+        doc.setTextColor(255, 0, 0);
+        doc.text("LISTA DE USUARIOS", 14, 16);
+
+        const tableColumn = ["Nombres", "Apellidos", "Usuario", "Correo", "Telefono", "Rol", "estado"];
+        const tableRows = usuariosFiltradas.map(usu => [
+            usu.nombre,
+            usu.apellidos,
+            usu.usuario,
+            usu.correo,
+            usu.telefono,
+            usu.rol.nombre,
+            usu.estado.nombre,
+        ]);
+
+        doc.autoTable({
+            head: [tableColumn],
+            body: tableRows,
+            startY: 20,
+            theme: 'grid',
+        });
+
+        doc.output('dataurlnewwindow');
+    };
+
 
     const handleDelete = async () => {
         if (!usuarioAEliminar) return;
@@ -234,6 +264,10 @@ const Usuarios = () => {
                     <div className="d-flex justify-content-between align-items-center">
                         <h2 className="m-0 text-white">Lista de Usuarios</h2>
                         <div>
+                            <button className="btn btn-light me-2" onClick={exportToPDF}
+                                disabled={localStorage.getItem('role') !== 'Admin'}>
+                                <i className="bi bi-file-earmark-pdf me-2 text-danger h5"></i>Exportar a PDF
+                            </button>
                             <button className="btn btn-light" onClick={() => handleOpenModal()}>Agregar Usuario</button>
                         </div>
                     </div>
@@ -277,25 +311,33 @@ const Usuarios = () => {
                             </tr>
                         </thead>
                         <tbody>
-                            {usuariosFiltradas.map((usu) => (
-                                <tr key={usu.idUsuario}>
-                                    <td>{usu.nombre}</td>
-                                    <td>{usu.apellidos}</td>
-                                    <td>{usu.usuario}</td>
-                                    <td>{usu.correo}</td>
-                                    <td>{usu.telefono}</td>
-                                    <td>{usu.rol.nombre}</td>
-                                    <td>{usu.estado.nombre}</td>
-                                    <td>
-                                        <span className="edit" title="Editar" onClick={() => handleEdit(usu)}>
-                                            <i className="material-icons">&#xE254;</i>
-                                        </span>
-                                        <span className="delete" title="Eliminar" onClick={() => handleConfirmDelete(usu.idUsuario)}>
-                                            <i className="material-icons">&#xE872;</i>
-                                        </span>
+                            {searchQuery && usuariosFiltradas.length === 0 ? (
+                                <tr>
+                                    <td colSpan="8" className="text-center">
+                                        El Usuario no existe
                                     </td>
                                 </tr>
-                            ))}
+                            ) : (
+                                usuariosFiltradas.map((usu) => (
+                                    <tr key={usu.idUsuario}>
+                                        <td>{usu.nombre}</td>
+                                        <td>{usu.apellidos}</td>
+                                        <td>{usu.usuario}</td>
+                                        <td>{usu.correo}</td>
+                                        <td>{usu.telefono}</td>
+                                        <td>{usu.rol.nombre}</td>
+                                        <td>{usu.estado.nombre}</td>
+                                        <td>
+                                            <span className="edit" title="Editar" onClick={() => handleEdit(usu)}>
+                                                <i className="material-icons">&#xE254;</i>
+                                            </span>
+                                            <span className="delete" title="Eliminar" onClick={() => handleConfirmDelete(usu.idUsuario)}>
+                                                <i className="material-icons">&#xE872;</i>
+                                            </span>
+                                        </td>
+                                    </tr>
+                                ))
+                            )}
                         </tbody>
                     </table>
                 </div>

@@ -12,7 +12,7 @@ import UsuarioNav from './Components/Navbar/usuarioNav.jsx';
 import Entradas from './Pages/Entradas/Entradas.jsx'
 import Salidas from './Pages/Salidas/Salidas.jsx';
 import Stock from './Pages/Stock/Stock.jsx';
-import Configuracion from './Pages/Configuracion/Configuracion.jsx';
+import Configuracion from './Pages/Configuracion/Perfil.jsx';
 import Usuarios from './Pages/Usuarios/Usuarios.jsx';
 
 const App = () => {
@@ -24,7 +24,7 @@ const App = () => {
 
                 {/*Ruta para el Dasborad(Pagina Principal)*/}
                 <Route
-                    path="/el_buen_lector/Pages/Dasboard/Dasboard"
+                    path="/el_buen_lector/Dasboard"
                     element={
                         <ProtectedRoute> {/*Permite Saber si el Usuario esta Autenticado osea sesion activa*/}
                             <div className="container">
@@ -40,7 +40,7 @@ const App = () => {
 
                 {/*Ruta para Libros (Pagina de Libros)*/}
                 <Route
-                    path="/el_buen_lector/Pages/Libros/Libros"
+                    path="/el_buen_lector/Libros"
                     element={
                         <ProtectedRoute>
                             <div className="container">
@@ -56,7 +56,7 @@ const App = () => {
 
                 {/*Ruta para Entradas (Pagina de Entradas)*/}
                 <Route
-                    path="/el_buen_lector/Pages/Entradas/Entradas"
+                    path="/el_buen_lector/Entradas"
                     element={
                         <ProtectedRoute>
                             <div className="container">
@@ -72,7 +72,7 @@ const App = () => {
 
                 {/*Ruta para Salidas (Pagina de Salidas)*/}
                 <Route
-                    path="/el_buen_lector/Pages/Salidas/Salidas"
+                    path="/el_buen_lector/Salidas"
                     element={
                         <ProtectedRoute>
                             <div className="container">
@@ -88,7 +88,7 @@ const App = () => {
 
                 {/*Ruta para Stock (Pagina de Stock)*/}
                 <Route
-                    path="/el_buen_lector/Pages/Stock/Stock"
+                    path="/el_buen_lector/Stock"
                     element={
                         <ProtectedRoute>
                             <div className="container">
@@ -104,7 +104,7 @@ const App = () => {
 
                 {/*Ruta para Usuarios (Pagina de Usuarios)*/}
                 <Route
-                    path="/el_buen_lector/Pages/Usuarios/Usuarios"
+                    path="/el_buen_lector/Usuarios"
                     element={
                         <ProtectedRoute>
                             <div className="container">
@@ -120,7 +120,7 @@ const App = () => {
 
                 {/*Ruta para Configuracion (Pagina de Configuracion del Usuario)*/}
                 <Route
-                    path="/el_buen_lector/Pages/Configuracion/Configuracion"
+                    path="/el_buen_lector/Perfil"
                     element={
                         <ProtectedRoute>
                             <div className="container">

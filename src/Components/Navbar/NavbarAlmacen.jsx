@@ -18,7 +18,7 @@ const NavbarAlmacen = () => {
         <div className="container">
             <aside>
                 <div className="top">
-                    <Link className="nav-link text-white" to="/el_buen_lector/Pages/Dasboard/Dasboard">
+                    <Link className="nav-link text-white" to="/el_buen_lector/Dasboard">
                         <div className="logo">
                             <img src={logo} alt="logo" />
                             <h2>ElBuen<span className="primary">Lector</span></h2>
@@ -30,27 +30,27 @@ const NavbarAlmacen = () => {
                 </div>
                 <div className="sidebar">
                     {/* Usamos "Active" determinar si el enlace debe tener la clase 'active' (nombre de la class) */}
-                    <Link className={Active('/el_buen_lector/Pages/Dasboard/Dasboard') ? 'active' : ''} to="/el_buen_lector/Pages/Dasboard/Dasboard">
+{/*                     <Link className={Active('/el_buen_lector/Pages/Dasboard/Dasboard') ? 'active' : ''} to="/el_buen_lector/Pages/Dasboard/Dasboard">
                         <span className="material-symbols-sharp">grid_view</span>
                         <h3>Inicio</h3>
-                    </Link>
-                    <Link className={Active('/el_buen_lector/Pages/Libros/Libros') ? 'active' : ''} to="/el_buen_lector/Pages/Libros/Libros">
+                    </Link> */}
+                    <Link className={Active('/el_buen_lector/Libros') ? 'active' : ''} to="/el_buen_lector/Libros">
                         <span className="material-symbols-sharp">library_books</span>
                         <h3>Libros</h3>
                     </Link>
-                    <Link className={Active('/el_buen_lector/Pages/Stock/Stock') ? 'active' : ''} to="/el_buen_lector/Pages/Stock/Stock">
+                    <Link className={Active('/el_buen_lector/Stock') ? 'active' : ''} to="/el_buen_lector/Stock">
                         <span className="material-symbols-sharp">box</span>
                         <h3>Stock</h3>
                     </Link>
-                    <Link className={Active('/el_buen_lector/Pages/Entradas/Entradas') ? 'active' : ''} to="/el_buen_lector/Pages/Entradas/Entradas">
+                    <Link className={Active('/el_buen_lector/Entradas') ? 'active' : ''} to="/el_buen_lector/Entradas">
                         <span className="material-symbols-sharp">contract_edit</span>
                         <h3>Entradas</h3>
                     </Link>
-                    <Link className={Active('/el_buen_lector/Pages/Salidas/Salidas') ? 'active' : ''} to="/el_buen_lector/Pages/Salidas/Salidas">
+                    <Link className={Active('/el_buen_lector/Salidas') ? 'active' : ''} to="/el_buen_lector/Salidas">
                         <span className="material-symbols-sharp">contract_delete</span>
                         <h3>Salidas</h3>
                     </Link>
-                    <Link className={Active('/el_buen_lector/Pages/Configuracion/Configuracion') ? 'active' : ''} to="/el_buen_lector/Pages/Configuracion/Configuracion">
+                    <Link className={Active('/el_buen_lector/Perfil') ? 'active' : ''} to="/el_buen_lector/Perfil">
                         <span className="material-symbols-sharp">settings</span>
                         <h3>Configuracion</h3>
                     </Link>

@@ -27,7 +27,7 @@ const Login = () => {
   useEffect(() => {
     const isAuthenticated = localStorage.getItem('isAuthenticated');
     if (isAuthenticated) {
-      navigate('/el_buen_lector/Pages/Dasboard/Dasboard');
+      navigate('/el_buen_lector/Dasboard');
     }
 
     const dayOfWeek = new Date().getDay();
@@ -64,7 +64,7 @@ const Login = () => {
         notyf.success('¡Has iniciado sesión exitosamente!');
 
         setTimeout(() => {
-          navigate('/el_buen_lector/Pages/Dasboard/Dasboard');
+          navigate('/el_buen_lector/Dasboard');
         }, 1000);
       }
     } catch (error) {

@@ -22,7 +22,7 @@ const Stock = () => {
   const [modalShowEntrada, setModalShowEntrada] = useState(false);
   const [modalShowSalida, setModalShowSalida] = useState(false);
   const [modalShowEditar, setModalShowEditar] = useState(false);
-  const [stockAEditar, setStockAEditar] = useState(null);  
+  const [stockAEditar, setStockAEditar] = useState(null);
   const token = localStorage.getItem('accessToken');
 
   // INSTANCIA PARA USAR NOTYF Y AGREGAR PROPIEDADES A LA ALERTA
@@ -37,14 +37,14 @@ const Stock = () => {
         method: 'GET',
         headers: {
           'Content-Type': 'application/json',
-          'Authorization': `Bearer ${token}`, 
+          'Authorization': `Bearer ${token}`,
         },
       });
 
       if (response.ok) {
         const responseJSON = await response.json();
         setStockLibros(responseJSON);
-        setStockFiltrados(responseJSON); 
+        setStockFiltrados(responseJSON);
       } else {
         console.error('Error al obtener datos:', response.statusText);
       }
@@ -87,7 +87,7 @@ const Stock = () => {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          'Authorization': `Bearer ${token}`,  
+          'Authorization': `Bearer ${token}`,
         },
         body: JSON.stringify({
           idLibro: parseInt(nuevoStockEntrada.idLibro),
@@ -128,7 +128,7 @@ const Stock = () => {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          'Authorization': `Bearer ${token}`,  
+          'Authorization': `Bearer ${token}`,
         },
         body: JSON.stringify({
           idLibro: parseInt(nuevoStockSalida.idLibro),
@@ -185,8 +185,8 @@ const Stock = () => {
       });
 
       if (response.ok) {
-        fetchStock();  
-        setModalShowEditar(false);  
+        fetchStock();
+        setModalShowEditar(false);
         notyf.success('Stock actualizado correctamente');
       } else {
         const errorData = await response.json();
@@ -214,9 +214,9 @@ const Stock = () => {
   const abrirModalEditar = (stock) => {
     setStockAEditar({
       idLibro: stock.libro.idLibro,
-      cantidad: stock.cantidadTotal, 
+      cantidad: stock.cantidadTotal,
     });
-    setModalShowEditar(true);  
+    setModalShowEditar(true);
   };
 
   const handleCloseModalEditar = () => {
@@ -306,6 +306,31 @@ const Stock = () => {
 
   //-------------- FIN BUSQUEDA ------------//
 
+  // Exportar a PDF
+  const exportToPDF = () => {
+    const { jsPDF } = window.jspdf;
+    const doc = new jsPDF();
+
+    // Título del PDF
+    doc.setFontSize(18);
+    doc.setTextColor(255, 0, 0);
+    doc.text("LISTA DE STOCK DE LIBROS", 14, 16);
+
+    const tableColumn = ["Título", "Cantidad"];
+    const tableRows = stockFiltrados.map(skt => [
+      skt.libro.titulo,
+      skt.cantidadTotal,
+    ]);
+
+    doc.autoTable({
+      head: [tableColumn],
+      body: tableRows,
+      startY: 20,
+      theme: 'grid',
+    });
+
+    doc.output('dataurlnewwindow');
+  };
 
   return (
     <div className="container mt-4">
@@ -315,6 +340,10 @@ const Stock = () => {
           <div className="d-flex justify-content-between align-items-center">
             <h2 className="m-0 text-white">Stock de Libros</h2>
             <div>
+              <button className="btn btn-light me-2" onClick={exportToPDF}
+                disabled={localStorage.getItem('role') !== 'Admin'}>
+                <i className="bi bi-file-earmark-pdf me-2 text-danger h5"></i>Exportar a PDF
+              </button>
               <button className="btn btn-light ms-2" onClick={() => setModalShowEntrada(true)}>
                 Agregar Entrada
               </button>
@@ -386,6 +415,7 @@ const Stock = () => {
                       }
                     }}
                     required
+                    maxLength={5}
                     disabled={!nuevoStockEntrada.idLibro}
                   />
                 </div>
@@ -461,6 +491,7 @@ const Stock = () => {
                     value={nuevoStockSalida.cantidad}
                     onChange={handleCantidadChange}
                     required
+                    maxLength={5}
                     disabled={!nuevoStockSalida.idLibro}
                   />
                   {nuevoStockSalida.stockDisponible !== undefined && (
@@ -541,6 +572,7 @@ const Stock = () => {
                     value={stockAEditar.cantidad}
                     onChange={handleCantidadChangeEditar}
                     required
+                    maxLength={5}
                   />
                 </div>
 
@@ -565,21 +597,29 @@ const Stock = () => {
             </tr>
           </thead>
           <tbody>
-            {stockFiltrados.map((skt) => (
-              <tr key={skt.idStock}>
-                <td className='col-8'>{skt.libro.titulo}</td>
-                <td>{skt.cantidadTotal}</td>
-                <td>
-                  <span
-                    className={`edit ${localStorage.getItem('role') !== 'Admin' ? 'disabled' : ''}`}
-                    title="Editar"
-                    onClick={() => abrirModalEditar(skt)}
-                    style={{ pointerEvents: localStorage.getItem('role') !== 'Admin' ? 'none' : 'auto', opacity: localStorage.getItem('role') !== 'Admin' ? 0.5 : 1 }}>
-                    <i className="material-icons">&#xE254;</i>
-                  </span>
+            {searchQuery && stockFiltrados.length === 0 ? (
+              <tr>
+                <td colSpan="6" className="text-center">
+                  El libro no existe
                 </td>
               </tr>
-            ))}
+            ) : (
+              stockFiltrados.map((skt) => (
+                <tr key={skt.idStock}>
+                  <td className='col-8'>{skt.libro.titulo}</td>
+                  <td>{skt.cantidadTotal}</td>
+                  <td>
+                    <span
+                      className={`edit ${localStorage.getItem('role') !== 'Admin' ? 'disabled' : ''}`}
+                      title="Editar"
+                      onClick={() => abrirModalEditar(skt)}
+                      style={{ pointerEvents: localStorage.getItem('role') !== 'Admin' ? 'none' : 'auto', opacity: localStorage.getItem('role') !== 'Admin' ? 0.5 : 1 }}>
+                      <i className="material-icons">&#xE254;</i>
+                    </span>
+                  </td>
+                </tr>
+              ))
+            )}
           </tbody>
         </table>
       </div>
