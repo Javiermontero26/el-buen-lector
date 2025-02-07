@@ -8,7 +8,7 @@ const NavbarAlmacen = () => {
 
     const handleLogout = () => {
         localStorage.removeItem('isAuthenticated');
-        navigate('/el_buen_lector');
+        navigate('/el_buen_lector/login');
     };
 
     // Función para comprobar si la ruta actual es la misma que la del enlace

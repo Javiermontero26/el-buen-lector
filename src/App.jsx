@@ -20,7 +20,7 @@ const App = () => {
         <Router>
             <Routes>
                 {/* Ruta para el Login */}
-                <Route path="/el_buen_lector" element={<Login />} />
+                <Route path="/el_buen_lector/login" element={<Login />} />
 
                 {/*Ruta para el Dasborad(Pagina Principal)*/}
                 <Route
@@ -135,7 +135,7 @@ const App = () => {
                 />
 
                 {/* Redirigir cualquier ruta desconocida al Login*/}
-                <Route path="/" element={<Navigate to="/el_buen_lector" replace />} />
+                <Route path="/" element={<Navigate to="/el_buen_lector/login" replace />} />
             </Routes>
         </Router>
     );

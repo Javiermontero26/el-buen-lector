@@ -5,7 +5,7 @@ const ProtectedRoute = ({ children, allowedRoles = [] }) => {
     const userRole = localStorage.getItem('role');
 
     if (!isAuthenticated || (allowedRoles.length > 0 && !allowedRoles.includes(userRole))) {
-        return <Navigate to="/el_buen_lector" replace />;
+        return <Navigate to="/el_buen_lector/login" replace />;
     }
 
     return children;
