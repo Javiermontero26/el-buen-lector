@@ -17,6 +17,8 @@ const Libros = () => {
   const [modalAutorShow, setModalAutorShow] = useState(false);
   const [modalEditShow, setModalEditShow] = useState(false);
   const [libroEditar, setLibroEditar] = useState(null);
+  const [modalDeleteShow, setModalDeleteShow] = useState(false);
+  const [libroEliminar, setLibroEliminar] = useState(null);
 
   const notyf = new Notyf();
 
@@ -131,6 +133,31 @@ const Libros = () => {
     }
   };
 
+  // Delete book function
+  const eliminarLibro = async () => {
+    const token = localStorage.getItem('accessToken');
+    try {
+      const response = await fetch(`http://localhost:8080/apiv1/libros/eliminar/${libroEliminar.idLibro}`, {
+        method: 'DELETE',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`,
+        },
+      });
+
+      if (response.ok) {
+        fetchLibros();
+        setModalDeleteShow(false);
+        setLibroEliminar(null);
+        notyf.success('Libro eliminado correctamente');
+      } else {
+        notyf.error('Error al eliminar el libro, Stock existente.');
+      }
+    } catch (error) {
+      console.error('Error en la solicitud de API para eliminar:', error);
+    }
+  };
+
   const handleChange = (e) => {
     const { name, value } = e.target;
     setNuevoLibro({
@@ -178,6 +205,17 @@ const Libros = () => {
       idAutor: libro.autor.idAutor,
     });
     setModalEditShow(true);
+  };
+
+  // Modal handlers
+  const handleCloseModalDelete = () => {
+    setModalDeleteShow(false);
+    setLibroEliminar(null);
+  };
+
+  const openModalDelete = (libro) => {
+    setLibroEliminar(libro);
+    setModalDeleteShow(true);
   };
 
   const clearSearch = () => {
@@ -404,6 +442,24 @@ const Libros = () => {
         </div>
       </div>
 
+      <div className={`modal fade ${modalDeleteShow ? 'show' : ''}`} style={{ display: modalDeleteShow ? 'block' : 'none' }} tabIndex="-1" aria-hidden="true">
+        <div className="modal-dialog">
+          <div className="modal-content">
+            <div className="modal-header">
+              <h5 className="modal-title">Confirmar Eliminación</h5>
+              <button type="button" className="btn-close" onClick={handleCloseModalDelete} aria-label="Close"></button>
+            </div>
+            <div className="modal-body">
+              <p>¿Estás seguro de que quieres eliminar el libro <strong>{libroEliminar?.titulo}</strong>?</p>
+            </div>
+            <div className="modal-footer">
+              <button type="button" className="btn btn-secondary" onClick={handleCloseModalDelete}>Cancelar</button>
+              <button type="button" className="btn btn-danger" onClick={eliminarLibro}>Eliminar</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
       <div className={`modal fade ${modalAutorShow ? 'show' : ''}`} style={{ display: modalAutorShow ? 'block' : 'none' }} tabIndex="-1" aria-hidden="true">
         <div className="modal-dialog">
           <div className="modal-content">
@@ -466,7 +522,7 @@ const Libros = () => {
                     <span className="edit" title="Editar" onClick={() => openModalEdit(libro)}>
                       <i className="material-icons">&#xE254;</i>
                     </span>
-                    <span className="delete" title="Eliminar" onClick={() => openModal('delete')}>
+                    <span className="delete" title="Eliminar" onClick={() => openModalDelete(libro)}>
                       <i className="material-icons">&#xE872;</i>
                     </span>
                   </td>

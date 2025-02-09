@@ -1,19 +1,26 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import '../NavUser/NavUser.css';
 import logoperfil from '../NavUser/profile-1.jpg';
-import { useLocation } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 
 const NavUser = () => {
     const userName = localStorage.getItem('userName');
     const role = localStorage.getItem('role');
     const location = useLocation();
+    const navigate = useNavigate();
 
-    // Función para obtener solo el último segmento de la ruta
     const getLastSegment = (pathname) => {
-        // Con esto me divide el enlace y me muestra solo el final divido por el /
         const segments = pathname.split('/');
         return segments[segments.length - 1];
     };
+
+    useEffect(() => {
+        if (role !== 'Admin' && role !== 'Almacenero' || !role) {
+            localStorage.clear();
+            navigate('/el_buen_lector/login');
+        }
+        
+    }, [role, navigate]);
 
     return (
         <div className="right">
@@ -26,7 +33,8 @@ const NavUser = () => {
                         <p className="text-white">Hola, <b className="text-white">{userName}</b></p>
                         <p className="text-white">
                             <small>
-                            {role === 'Admin' && 'Administrador'}{role === 'Almacenero' && 'Almacénero'}
+                                {role === 'Admin' && 'Administrador'}
+                                {role === 'Almacenero' && 'Almacénero'}
                             </small>
                         </p>
                     </div>
